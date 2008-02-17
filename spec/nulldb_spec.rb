@@ -80,6 +80,14 @@ describe "NullDB" do
       (exec_count + 1)
   end
 
+  it "should have the adapter name 'NullDB'" do
+    @employee.connection.adapter_name.should == "NullDB"
+  end
+
+  it "should support migrations" do
+    @employee.connection.supports_migrations?.should be_true
+  end
+
   def should_have_column(klass, col_name, col_type)
     col = klass.columns_hash[col_name.to_s]
     col.should_not be_nil

@@ -23,6 +23,14 @@ class ActiveRecord::ConnectionAdapters::NullDB <
     super(nil, @logger)
   end
 
+  def adapter_name
+    "NullDB"
+  end
+
+  def supports_migrations?
+    true
+  end
+
   def create_table(table_name, options = {})
     table_definition = ActiveRecord::ConnectionAdapters::TableDefinition.new(self)
     unless options[:id] == false
