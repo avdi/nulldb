@@ -1,0 +1,67 @@
+= The NullDB Connection Adapter Plugin
+
+== What
+
+NullDB is a Rails database connection adapter that interprets common
+database operations as no-ops.
+
+== How 
+
+In your database.yml:
+
+  unit_test:
+    adapter: nulldb
+
+That's all there is to it.  Now any code run in the +unit_test+
+environment, *including* schema definitions, will execute using the
+NullDB database connector.  Most simple database operations will be
+safe no-ops.  If a schema definition is executed - which is normally
+done automatically before unit tests and specs in Rails - NullDB will
+use the schema information to reflect table and column metadata.
+
+== Why 
+
+NullDB is intended to assist in writing fast database-independant unit
+tests for ActiveRecord classes.  For why you would want to test your
+models without the database, see:
+http://www.dcmanges.com/blog/rails-unit-record-test-without-the-database.
+
+NullDB was inspired by the ARBS[http://arbs.rubyforge.org/] and
+UnitRecord[http://unit-test-ar.rubyforge.org/] libraries.  It differs
+from them in a couple of ways:
+
+1. It works.  At the time of writing both ARBS and UnitRecord were
+   broken out of the box when used with Rails 2.0. 
+
+2. It avoids monkey-patching.  Rather than re-wiring the secret inner
+   workings of ActiveRecord (and thus being tightly coupled to said
+   inner workings), NullDB implements the same well-documented public
+   interface that the other standard database adapters, like MySQL
+   and SQLServer, implement.
+
+3. UnitRecord takes the approach of eliminating database interaction
+   in tests by turning almost every database interaction into an
+   exception.  NullDB recognizes that today's ActiveRecord objects
+   can't take two steps without consulting the database, and instead
+   turns database interactions into safe no-ops.
+
+One concrete advantage of this null-object pattern design is that it
+is possible with NullDB to test +after_save+ hooks.  With NullDB, you
+can call +#save+ and all of the usual callbacks will be called - but
+nothing will be saved.
+
+== Limitations
+
+* It is *not* an in-memory database.  Finds will not work.  Neither
+  will #reload, currently.
+* It has only the most rudimentery schema/migration support.  Complex
+  migrations will probably break it.
+* Lots of other things probably don't work.  Patches welcome!
+
+== Who 
+
+NullDB was written by Avdi Grimm <avdi@avdi.org>
+
+== License
+
+See the LICENSE file for licensing information.
