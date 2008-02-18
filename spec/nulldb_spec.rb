@@ -9,6 +9,35 @@ class Employee < ActiveRecord::Base
   end
 end
 
+RAILS_ROOT = "RAILS_ROOT"
+
+describe "NullDB with no schema pre-loaded" do
+  before :each do
+    Kernel.stub!(:load)
+    ActiveRecord::Migration.stub!(:verbose=)
+  end
+
+  it "should load RAILS_ROOT/db/schema.rb if no alternate is specified" do
+    ActiveRecord::Base.establish_connection :adapter => :nulldb
+    Kernel.should_receive(:load).with("RAILS_ROOT/db/schema.rb")
+    ActiveRecord::Base.connection.columns('schema_info')
+  end
+
+  it "should load the specified schema relative to RAILS_ROOT" do
+    Kernel.should_receive(:load).with("RAILS_ROOT/foo/myschema.rb")
+    ActiveRecord::Base.establish_connection :adapter => :nulldb,
+                                            :schema => "foo/myschema.rb"
+    ActiveRecord::Base.connection.columns('schema_info')
+  end
+
+  it "should suppress migration output" do
+    ActiveRecord::Migration.should_receive(:verbose=).with(false)
+    ActiveRecord::Base.establish_connection :adapter => :nulldb,
+                                            :schema => "foo/myschema.rb"
+    ActiveRecord::Base.connection.columns('schema_info')
+  end
+end
+
 describe "NullDB" do
   before :all do
     ActiveRecord::Base.establish_connection :adapter => :nulldb
@@ -86,6 +115,14 @@ describe "NullDB" do
 
   it "should support migrations" do
     @employee.connection.supports_migrations?.should be_true
+  end
+
+  it "should always have a schema_info table definition" do
+    @employee.connection.tables.should include("schema_info")
+  end
+
+  it "should return an empty array from #select" do
+    @employee.connection.select("who cares", "blah").should == []
   end
 
   def should_have_column(klass, col_name, col_type)

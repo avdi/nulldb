@@ -9,5 +9,5 @@ end
 
 Rake::RDocTask.new do |rd|
   rd.main = "README"
-  rd.rdoc_files.include("README", "lib/**/*.rb")
+  rd.rdoc_files.include("README", "LICENSE", "lib/**/*.rb")
 end

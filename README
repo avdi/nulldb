@@ -3,21 +3,40 @@
 == What
 
 NullDB is a Rails database connection adapter that interprets common
-database operations as no-ops.
+database operations as no-ops.  It is the Null Object pattern as
+applied to database adapters.
 
 == How 
 
-In your database.yml:
+Once installed, NullDB can be used much like any other ActiveRecord
+database adapter:
+
+  ActiveRecord::Base.establish_connection :adapter => nulldb
+
+NullDB needs to know where you keep your schema file in order to
+reflect table metadata.  By default it looks in
+RAILS_ROOT/db/schema.rb.  You can override that by setting the
++schema+ option:
+
+  ActiveRecord::Base.establish_connection :adapter => nulldb,
+                                          :schema  => foo/myschema.rb
+
+There is a helper method included for configuring RSpec sessions to
+use NullDB.  Just put the following in your spec/spec_helper.rb:
+
+  Spec::Runner.configure do |config|
+    ::NullDB.insinuate_into_spec(config)
+  end
+
+You can also experiment with putting NullDB in your database.yml:
 
   unit_test:
     adapter: nulldb
 
-That's all there is to it.  Now any code run in the +unit_test+
-environment, *including* schema definitions, will execute using the
-NullDB database connector.  Most simple database operations will be
-safe no-ops.  If a schema definition is executed - which is normally
-done automatically before unit tests and specs in Rails - NullDB will
-use the schema information to reflect table and column metadata.
+However, due to the way Rails hard-codes specific database adapters
+into its standard Rake tasks, you may find that this generates
+unexpected and difficult-to-debug behavior.  Workarounds for this are
+under development.
 
 == Why 
 
@@ -31,19 +50,19 @@ UnitRecord[http://unit-test-ar.rubyforge.org/] libraries.  It differs
 from them in a couple of ways:
 
 1. It works.  At the time of writing both ARBS and UnitRecord were
-   broken out of the box when used with Rails 2.0. 
+   not working for me out of the box with Rails 2.0. 
 
-2. It avoids monkey-patching.  Rather than re-wiring the secret inner
-   workings of ActiveRecord (and thus being tightly coupled to said
-   inner workings), NullDB implements the same well-documented public
-   interface that the other standard database adapters, like MySQL
-   and SQLServer, implement.
+2. It avoids monkey-patching as much as possible.  Rather than
+   re-wiring the secret inner workings of ActiveRecord (and thus being
+   tightly coupled to those inner workings), NullDB implements the
+   same [semi-]well-documented public interface that the other standard
+   database adapters, like MySQL and SQLServer, implement.
 
 3. UnitRecord takes the approach of eliminating database interaction
    in tests by turning almost every database interaction into an
-   exception.  NullDB recognizes that today's ActiveRecord objects
-   can't take two steps without consulting the database, and instead
-   turns database interactions into safe no-ops.
+   exception.  NullDB recognizes that ActiveRecord objects typically
+   can't take two steps without consulting the database, so instead it
+   turns database interactions into no-ops.
 
 One concrete advantage of this null-object pattern design is that it
 is possible with NullDB to test +after_save+ hooks.  With NullDB, you
@@ -60,7 +79,7 @@ nothing will be saved.
 
 == Who 
 
-NullDB was written by Avdi Grimm <avdi@avdi.org>
+NullDB was written by Avdi Grimm <mailto:avdi@avdi.org>
 
 == License
 
