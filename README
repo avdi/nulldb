@@ -40,7 +40,7 @@ under development.
 
 == Why 
 
-NullDB is intended to assist in writing fast database-independant unit
+NullDB is intended to assist in writing fast database-independent unit
 tests for ActiveRecord classes.  For why you would want to test your
 models without the database, see:
 http://www.dcmanges.com/blog/rails-unit-record-test-without-the-database.
