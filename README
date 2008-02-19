@@ -2,23 +2,25 @@
 
 == What
 
-NullDB is a Rails database connection adapter that interprets common
-database operations as no-ops.  It is the Null Object pattern as
-applied to database adapters.
+NullDB is the Null Object pattern as applied to ActiveRecord database
+adapters.  It is a database backend that translates database
+interactions into no-ops.  Using NullDB enables you to test your model
+business logic - including +after_save+ hooks - without ever touching
+a real database.
 
 == How 
 
 Once installed, NullDB can be used much like any other ActiveRecord
 database adapter:
 
-  ActiveRecord::Base.establish_connection :adapter => nulldb
+  ActiveRecord::Base.establish_connection :adapter => :nulldb
 
 NullDB needs to know where you keep your schema file in order to
 reflect table metadata.  By default it looks in
 RAILS_ROOT/db/schema.rb.  You can override that by setting the
 +schema+ option:
 
-  ActiveRecord::Base.establish_connection :adapter => nulldb,
+  ActiveRecord::Base.establish_connection :adapter => :nulldb,
                                           :schema  => foo/myschema.rb
 
 There is a helper method included for configuring RSpec sessions to
@@ -40,12 +42,16 @@ under development.
 
 == Why 
 
-NullDB is intended to assist in writing fast database-independent unit
-tests for ActiveRecord classes.  For why you would want to test your
-models without the database, see:
+There are a number of advantages to writing unit tests that never
+touch the database.  The biggest is probably speed of execution - unit
+tests must be fast for test-driven development to be practical.
+Another is separation of concerns: unit tests should be exercising
+only the business logic contained in your models, not ActiveRecord.
+For more on why testing-sans-database is a god idea, see:
 http://www.dcmanges.com/blog/rails-unit-record-test-without-the-database.
 
-NullDB was inspired by the ARBS[http://arbs.rubyforge.org/] and
+NullDB is one way to separate your unit tests from the database.  It
+was inspired by the ARBS[http://arbs.rubyforge.org/] and
 UnitRecord[http://unit-test-ar.rubyforge.org/] libraries.  It differs
 from them in a couple of ways:
 
@@ -72,7 +78,8 @@ nothing will be saved.
 == Limitations
 
 * It is *not* an in-memory database.  Finds will not work.  Neither
-  will #reload, currently.
+  will +reload+, currently.  Test fixtures won't work either, for
+  obvious reasons.
 * It has only the most rudimentery schema/migration support.  Complex
   migrations will probably break it.
 * Lots of other things probably don't work.  Patches welcome!
