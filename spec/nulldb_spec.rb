@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'spec'
 require 'active_record'
 $: << File.join(File.dirname(__FILE__), "..", "lib")
 
@@ -103,10 +104,10 @@ describe "NullDB" do
   end
 
   it "should log executed SQL statements" do
-    exec_count = ActiveRecord::ConnectionAdapters::NullDB.execution_log.size
+    cxn = @employee.connection
+    exec_count = cxn.execution_log.size
     @employee.save!
-    ActiveRecord::ConnectionAdapters::NullDB.execution_log.size.should ==
-      (exec_count + 1)
+    cxn.execution_log.size.should == (exec_count + 1)
   end
 
   it "should have the adapter name 'NullDB'" do
@@ -122,8 +123,56 @@ describe "NullDB" do
   end
 
   it "should return an empty array from #select" do
-    @employee.connection.select("who cares", "blah").should == []
+    @employee.connection.select_all("who cares", "blah").should == []
   end
+
+  it "should provide a way to set log checkpoints" do
+    cxn = @employee.connection
+    @employee.save!
+    cxn.execution_log_since_checkpoint.size.should > 0
+    cxn.checkpoint!
+    cxn.execution_log_since_checkpoint.size.should == 0
+    @employee.save!
+    cxn.execution_log_since_checkpoint.size.should == 1
+  end
+
+  def should_contain_statement(cxn, entry_point)
+    cxn.execution_log_since_checkpoint.should \
+      include(ActiveRecord::ConnectionAdapters::NullDBAdapter::Statement.new(entry_point))
+  end
+
+  def should_not_contain_statement(cxn, entry_point)
+    cxn.execution_log_since_checkpoint.should_not \
+      include(ActiveRecord::ConnectionAdapters::NullDBAdapter::Statement.new(entry_point))
+  end
+
+  it "should tag logged statements with their entry point" do
+    cxn = @employee.connection
+
+    should_not_contain_statement(cxn, :insert)
+    @employee.save
+    should_contain_statement(cxn, :insert)
+
+    cxn.checkpoint!
+    should_not_contain_statement(cxn, :update)
+    @employee.save
+    should_contain_statement(cxn, :update)
+
+    cxn.checkpoint!
+    should_not_contain_statement(cxn, :delete)
+    @employee.destroy
+    should_contain_statement(cxn, :delete)
+
+    cxn.checkpoint!
+    should_not_contain_statement(cxn, :select_all)
+    Employee.find(:all)
+    should_contain_statement(cxn, :select_all)
+
+    cxn.checkpoint!
+    should_not_contain_statement(cxn, :select_value)
+    Employee.count_by_sql("frobozz")
+    should_contain_statement(cxn, :select_value)
+end
 
   def should_have_column(klass, col_name, col_type)
     col = klass.columns_hash[col_name.to_s]

@@ -6,12 +6,34 @@ require 'active_record/connection_adapters/abstract_adapter'
 class ActiveRecord::Base
   # Instantiate a new NullDB connection.  Used by ActiveRecord internally.
   def self.nulldb_connection(config)
-    ActiveRecord::ConnectionAdapters::NullDB.new(config)
+    ActiveRecord::ConnectionAdapters::NullDBAdapter.new(config)
   end
 end
 
-class ActiveRecord::ConnectionAdapters::NullDB <
+class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     ActiveRecord::ConnectionAdapters::AbstractAdapter
+
+  class Statement
+    attr_reader :entry_point, :content
+
+    def initialize(entry_point, content = "")
+      @entry_point, @content = entry_point, content
+    end
+
+    def ==(other)
+      self.entry_point == other.entry_point
+    end
+  end
+
+  class Checkpoint < Statement
+    def initialize
+      super(:checkpoint, "")
+    end
+
+    def ==(other)
+      self.class == other.class
+    end
+  end
 
   TableDefinition = ActiveRecord::ConnectionAdapters::TableDefinition
 
@@ -27,10 +49,6 @@ class ActiveRecord::ConnectionAdapters::NullDB <
     end
   end
 
-  def self.execution_log
-    (@@execution_log ||= [])
-  end
-
   # Recognized options:
   #
   # [+:schema+] path to the schema file, relative to RAILS_ROOT
@@ -41,6 +59,25 @@ class ActiveRecord::ConnectionAdapters::NullDB <
     @tables         = {'schema_info' =>  TableDefinition.new(nil)}
     @schema_path    = config.fetch(:schema){ "db/schema.rb" }
     super(nil, @logger)
+  end
+
+  # A log of every statement that has been "executed" by this connection adapter
+  # instance.
+  def execution_log
+    (@execution_log ||= [])
+  end
+
+  # A log of every statement that has been "executed" since the last time
+  # #checkpoint! was called, or since the connection was created.
+  def execution_log_since_checkpoint
+    checkpoint_index = @execution_log.rindex(Checkpoint.new)
+    checkpoint_index = checkpoint_index ? checkpoint_index + 1 : 0
+    @execution_log[(checkpoint_index..-1)]
+  end
+
+  # Inserts a checkpoint in the log.  See also #execution_log_since_checkpoint.
+  def checkpoint!
+    self.execution_log << Checkpoint.new
   end
 
   def adapter_name
@@ -62,10 +99,12 @@ class ActiveRecord::ConnectionAdapters::NullDB <
     @tables[table_name] = table_definition
   end
 
+  # Retrieve the table names defined by the schema
   def tables
     @tables.keys.map(&:to_s)
   end
 
+  # Retrieve table columns as defined by the schema
   def columns(table_name, name = nil)
     if @tables.size <= 1
       ActiveRecord::Migration.verbose = false
@@ -81,21 +120,82 @@ class ActiveRecord::ConnectionAdapters::NullDB <
   end
 
   def execute(statement, name = nil)
-    self.class.execution_log << statement
+    self.execution_log << Statement.new(entry_point, statement)
   end
 
-  def insert(statement, name, primary_key, object_id, *args)
-    execute(statement, name)
-    object_id || next_unique_id
+  def insert(statement, name, primary_key, object_id, sequence_name)
+    returning(object_id || next_unique_id) do
+      with_entry_point(:insert) do
+        super(statement, name, primary_key, object_id, sequence_name)
+      end
+    end
   end
+
+  def update(statement, name=nil)
+    with_entry_point(:update) do
+      super(statement, name)
+    end
+  end
+
+  def delete(statement, name=nil)
+    with_entry_point(:delete) do
+      super(statement, name)
+    end
+  end
+
+  def select_all(statement, name=nil)
+    with_entry_point(:select_all) do
+      super(statement, name)
+    end
+  end
+
+  def select_one(statement, name=nil)
+    with_entry_point(:select_one) do
+      super(statement, name)
+    end
+  end
+
+  def select_value(statement, name=nil)
+    with_entry_point(:select_value) do
+      super(statement, name)
+    end
+  end
+
+  protected
 
   def select(statement, name)
-    []
+    returning([]) do
+      self.execution_log << Statement.new(entry_point, statement)
+    end
   end
 
   private
 
   def next_unique_id
     @last_unique_id += 1
+  end
+
+  def with_entry_point(method)
+    if entry_point.nil?
+      with_thread_local_variable(:entry_point, method) do
+        yield
+      end
+    else
+      yield
+    end
+  end
+
+  def entry_point
+    Thread.current[:entry_point]
+  end
+
+  def with_thread_local_variable(name, value)
+    old_value = Thread.current[name]
+    Thread.current[name] = value
+    begin
+      yield
+    ensure
+      Thread.current[name] = old_value
+    end
   end
 end
