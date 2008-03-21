@@ -37,6 +37,12 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
 
   TableDefinition = ActiveRecord::ConnectionAdapters::TableDefinition
 
+  class NullObject
+    def method_missing(*args, &block)
+      nil
+    end
+  end
+
   # A convenience method for integratinginto RSpec.  See README for example of
   # use.
   def self.insinuate_into_spec(config)
@@ -129,6 +135,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
 
   def execute(statement, name = nil)
     self.execution_log << Statement.new(entry_point, statement)
+    NullObject.new
   end
 
   def insert(statement, name, primary_key, object_id, sequence_name)

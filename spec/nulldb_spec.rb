@@ -53,7 +53,6 @@ describe "NullDB" do
 
       add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
       add_pk_constraint "foo", "bar", {}, "baz", "buz"
-
     end
   end
 
@@ -176,7 +175,11 @@ describe "NullDB" do
     should_not_contain_statement(cxn, :select_value)
     Employee.count_by_sql("frobozz")
     should_contain_statement(cxn, :select_value)
-end
+  end
+
+  it "should allow #finish to be called on the result of #execute" do
+    @employee.connection.execute("blah").finish
+  end
 
   def should_have_column(klass, col_name, col_type)
     col = klass.columns_hash[col_name.to_s]
