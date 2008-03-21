@@ -50,6 +50,9 @@ describe "NullDB" do
         t.integer :employee_number
         t.decimal :salary
       end
+
+      add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
+
     end
   end
 
