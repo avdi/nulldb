@@ -52,6 +52,7 @@ describe "NullDB" do
       end
 
       add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
+      add_pk_constraint "foo", "bar", {}, "baz", "buz"
 
     end
   end

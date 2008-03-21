@@ -103,6 +103,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     # NOOP
   end
 
+  def add_pk_constraint(*args)
+    # NOOP
+  end
+
   # Retrieve the table names defined by the schema
   def tables
     @tables.keys.map(&:to_s)
