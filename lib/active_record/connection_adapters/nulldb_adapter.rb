@@ -112,7 +112,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
       table_definition.primary_key(options[:primary_key] || "id")
     end
 
-    yield table_definition
+    yield table_definition if block_given?
 
     @tables[table_name] = table_definition
   end

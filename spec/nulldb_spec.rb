@@ -40,6 +40,13 @@ describe "NullDB with no schema pre-loaded" do
                                             :schema => "foo/myschema.rb"
     ActiveRecord::Base.connection.columns('schema_info')
   end
+
+  it "should allow creating a table without passing a block" do
+    ActiveRecord::Base.establish_connection :adapter => :nulldb
+    ActiveRecord::Schema.define do
+      create_table(:employees)
+    end
+  end
 end
 
 describe "NullDB" do
