@@ -10,6 +10,17 @@ class ActiveRecord::Base
   end
 end
 
+
+module ActiveRecord
+  # Just make sure you have the latest version of your schema
+  class Schema < Migration
+    def self.define(info={}, &block)
+      instance_eval(&block)
+    end
+  end
+end
+
+
 class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     ActiveRecord::ConnectionAdapters::AbstractAdapter
 
@@ -137,6 +148,12 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     self.execution_log << Statement.new(entry_point, statement)
     NullObject.new
   end
+
+  def select_rows(statement, name = nil)
+    returning([]) do
+      self.execution_log << Statement.new(entry_point, statement)
+    end
+  end  
 
   def insert(statement, name, primary_key, object_id, sequence_name)
     returning(object_id || next_unique_id) do
