@@ -14,11 +14,13 @@ end
 
 desc "Publish project home page"
 task :publish => ["rdoc"] do
-  sh "rsync --recursive html/* avdi.org:avdi.org/projects/nulldb/"
+  sh "scp -r html/* avdi@rubyforge.org:/var/www/gforge-projects/nulldb"
 end
 
 desc "Tag release"
 task :tag do
+  warn "This needs to be updated for git"
+  exit 1
   repos   = "http://svn.avdi.org/nulldb"
   version = ENV["VERSION"]
   raise "No version specified" unless version

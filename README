@@ -127,13 +127,16 @@ NullDB was written by Avdi Grimm <mailto:avdi@avdi.org>
 
 == Where
 
-* Homepage: http://avdi.org/projects/nulldb/
-* Public SVN: http://svn.avdi.org/nulldb/
+* Homepage: http://nulldb.rubyforge.org
+* Project Info: http://rubyforge.org/projects/nulldb/
+* SCM: http://rubyforge.org/scm/?group_id=7512
 
 == Changes
 
  * Version 0.0.1 (2007-02-18)
    - Initial Release
+ * Version 0.0.2 (2007-05-31)
+   - Moved to Rubyforge
 
 == License
 
