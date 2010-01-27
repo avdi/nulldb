@@ -135,6 +135,7 @@ describe "NullDB" do
     cxn.execution_log_since_checkpoint.size.should > 0
     cxn.checkpoint!
     cxn.execution_log_since_checkpoint.size.should == 0
+    @employee.salary = @employee.salary + 1
     @employee.save!
     cxn.execution_log_since_checkpoint.size.should == 1
   end
@@ -158,6 +159,7 @@ describe "NullDB" do
 
     cxn.checkpoint!
     should_not_contain_statement(cxn, :update)
+    @employee.salary = @employee.salary + 1
     @employee.save
     should_contain_statement(cxn, :update)
 
