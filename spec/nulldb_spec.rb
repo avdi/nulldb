@@ -63,6 +63,10 @@ describe "NullDB" do
                              :salary          => 56000.00)
   end
 
+  it "should set the @config instance variable so plugins that assume its there can use it" do
+    Employee.connection.instance_variable_get(:@config).should == { :adapter => :nulldb }
+  end
+
   it "should enable instantiation of AR objects without a database" do
     @employee.should_not be_nil
     @employee.should be_a_kind_of(ActiveRecord::Base)

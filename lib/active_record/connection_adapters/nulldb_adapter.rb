@@ -75,6 +75,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     @last_unique_id = 0
     @tables         = {'schema_info' =>  TableDefinition.new(nil)}
     @schema_path    = config.fetch(:schema){ "db/schema.rb" }
+    @config         = config.merge(:adapter => :nulldb)
     super(nil, @logger)
   end
 
