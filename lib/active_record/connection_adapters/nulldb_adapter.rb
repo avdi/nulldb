@@ -136,12 +136,16 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
       ActiveRecord::Migration.verbose = false
       Kernel.load(File.join(RAILS_ROOT, @schema_path))
     end
-    table = @tables[table_name]
-    table.columns.map do |col_def|
-      ActiveRecord::ConnectionAdapters::Column.new(col_def.name.to_s,
-                                                    col_def.default,
-                                                    col_def.type,
-                                                    col_def.null)
+
+    if table = @tables[table_name]
+      table.columns.map do |col_def|
+        ActiveRecord::ConnectionAdapters::Column.new(col_def.name.to_s,
+                                                      col_def.default,
+                                                      col_def.type,
+                                                      col_def.null)
+      end
+    else
+      []
     end
   end
 

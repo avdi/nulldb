@@ -10,6 +10,9 @@ class Employee < ActiveRecord::Base
   end
 end
 
+class TablelessModel < ActiveRecord::Base
+end
+
 RAILS_ROOT = "RAILS_ROOT"
 
 describe "NullDB with no schema pre-loaded" do
@@ -77,6 +80,10 @@ describe "NullDB" do
     should_have_column(Employee, :hire_date, :date)
     should_have_column(Employee, :employee_number, :integer)
     should_have_column(Employee, :salary, :decimal)
+  end
+
+  it "should return an empty array of columns for a table-less model" do
+    TablelessModel.columns.should == []
   end
 
   it "should enable simulated saving of AR objects" do
