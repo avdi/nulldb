@@ -123,7 +123,8 @@ nothing will be saved.
 
 == Who 
 
-NullDB was written by Avdi Grimm <mailto:avdi@avdi.org>
+NullDB was originally written by Avdi Grimm <mailto:avdi@avdi.org>.
+It is currently maintained by {Myron Marston}[http://github.com/myronmarston].
 
 == Where
 
