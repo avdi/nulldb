@@ -121,6 +121,14 @@ nothing will be saved.
   migrations will probably break it.
 * Lots of other things probably don't work.  Patches welcome!
 
+== Ruby Version Compatibility
+
+  specs.should pass if RUBY_VERSION =~ /^1.(8.6|8.7|9.1)$/
+
+== Continuous Integration
+
+The specs are run against ruby 1.8.6 and ruby 1.9.1 on every commit over at {runcoderun}[http://runcoderun.com/nulldb/nulldb].
+
 == Who 
 
 NullDB was originally written by Avdi Grimm <mailto:avdi@avdi.org>.
@@ -138,6 +146,8 @@ It is currently maintained by {Myron Marston}[http://github.com/myronmarston].
    - Initial Release
  * Version 0.0.2 (2007-05-31)
    - Moved to Rubyforge
+ * Version 0.1.0 (2010-03-02)
+   - Released as a gem, with some bug fixes.
 
 == License
 
