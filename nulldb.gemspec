@@ -21,9 +21,9 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "init.rb",
      "lib/active_record/connection_adapters/nulldb_adapter.rb",
      "lib/nulldb_rspec.rb",
+     "nulldb.gemspec",
      "spec/nulldb_spec.rb",
      "tasks/database.rake"
   ]
