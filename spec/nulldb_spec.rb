@@ -76,7 +76,7 @@ describe "NullDB" do
   end
 
   it "should set the @config instance variable so plugins that assume its there can use it" do
-    Employee.connection.instance_variable_get(:@config).should == { :adapter => :nulldb }
+    Employee.connection.instance_variable_get(:@config)[:adapter].should == :nulldb
   end
 
   it "should enable instantiation of AR objects without a database" do
