@@ -121,13 +121,10 @@ nothing will be saved.
   migrations will probably break it.
 * Lots of other things probably don't work.  Patches welcome!
 
-== Ruby Version Compatibility
+== Version Compatibility
 
-  specs.should pass if RUBY_VERSION =~ /^1.(8.6|8.7|9.1)$/
-
-== Continuous Integration
-
-The specs are run against ruby 1.8.6 and ruby 1.9.1 on every commit over at {runcoderun}[http://runcoderun.com/nulldb/nulldb].
+The specs pass against ruby {1.8.6}[http://integrity186.heroku.com/null-db], {1.8.7}[http://integrity187.heroku.com/null-db]
+and {1.9.1}[http://integrity191.heroku.com/null-db], using ActiveRecord 2.0.0 to 2.3.5.
 
 == Who 
 
