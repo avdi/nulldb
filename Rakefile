@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "nulldb"
+    gem.name = 'activerecord-nulldb-adapter'
     gem.summary = %Q{The Null Object pattern as applied to ActiveRecord database adapters}
     gem.description = %Q{A database backend that translates database interactions into no-ops. Using NullDB enables you to test your model business logic - including after_save hooks - without ever touching a real database.}
     gem.email = "myron.marston@gmail.com"
