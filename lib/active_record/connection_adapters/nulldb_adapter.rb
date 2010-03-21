@@ -2,6 +2,7 @@ require 'logger'
 require 'stringio'
 require 'singleton'
 require 'active_record/connection_adapters/abstract_adapter'
+require 'active_support/core_ext/object/returning'
 
 class ActiveRecord::Base
   # Instantiate a new NullDB connection.  Used by ActiveRecord internally.
@@ -160,13 +161,14 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     end
   end  
 
-  def insert(statement, name, primary_key, object_id, sequence_name)
+  def insert(statement, name = nil, primary_key = nil, object_id = nil, sequence_name = nil)
     returning(object_id || next_unique_id) do
       with_entry_point(:insert) do
         super(statement, name, primary_key, object_id, sequence_name)
       end
     end
   end
+  alias :create :insert
 
   def update(statement, name=nil)
     with_entry_point(:update) do
