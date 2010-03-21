@@ -2,7 +2,7 @@ require 'logger'
 require 'stringio'
 require 'singleton'
 require 'active_record/connection_adapters/abstract_adapter'
-require 'active_support/core_ext/object/returning'
+require 'active_support/core_ext/object/returning' unless Object.new.respond_to?(:returning)
 
 class ActiveRecord::Base
   # Instantiate a new NullDB connection.  Used by ActiveRecord internally.
