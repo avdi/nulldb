@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{activerecord-nulldb-adapter}
-  s.version = "0.1.1"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Avdi Grimm", "Myron Marston"]
-  s.date = %q{2010-03-15}
+  s.date = %q{2010-03-20}
   s.description = %q{A database backend that translates database interactions into no-ops. Using NullDB enables you to test your model business logic - including after_save hooks - without ever touching a real database.}
   s.email = %q{myron.marston@gmail.com}
   s.extra_rdoc_files = [
@@ -22,12 +22,13 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "activerecord-nulldb-adapter.gemspec",
      "ginger_scenarios.rb",
      "lib/active_record/connection_adapters/nulldb_adapter.rb",
      "lib/nulldb_rspec.rb",
+     "lib/tasks/database.rake",
      "spec/nulldb_spec.rb",
-     "spec/spec.opts",
-     "tasks/database.rake"
+     "spec/spec.opts"
   ]
   s.homepage = %q{http://github.com/nulldb/nulldb}
   s.rdoc_options = ["--charset=UTF-8"]
