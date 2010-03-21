@@ -11,7 +11,11 @@ Ginger.configure do |config|
   config.aliases["active_record"] = "activerecord"
   config.aliases["active_support"] = "activesupport"
 
-  versions = %w( 2.3.5 2.3.4 2.3.3 2.3.2 )
+  versions = []
+
+  # Rails 3 doesn't work on Ruby 1.8.6, so skip it.
+  versions << '3.0.0.beta' unless RUBY_VERSION == '1.8.6'
+  versions += %w( 2.3.5 2.3.4 2.3.3 2.3.2 )
   versions += %w(
     2.2.3 2.2.2
     2.1.2 2.1.1 2.1.0
