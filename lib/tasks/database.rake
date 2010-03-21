@@ -19,15 +19,14 @@ def wrap_task(task_name, &wrapper)
   end
 end
 
-# For later exploration...
-# namespace :db do
-#   namespace :test do
-#     wrap_task :purge do |wrapped_task|
-#       if ActiveRecord::Base.configurations["test"]["adapter"] == "nulldb"
-#         # NO-OP
-#       else
-#         wrapped_task.invoke
-#       end
-#     end
-#   end
-# end
+namespace :db do
+  namespace :test do
+    wrap_task :purge do |wrapped_task|
+      if ActiveRecord::Base.configurations["test"]["adapter"] == "nulldb"
+        # NO-OP
+      else
+        wrapped_task.invoke
+      end
+    end
+  end
+end
