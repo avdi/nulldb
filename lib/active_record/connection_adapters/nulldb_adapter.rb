@@ -69,7 +69,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
 
   # Recognized options:
   #
-  # [+:schema+] path to the schema file, relative to RAILS_ROOT
+  # [+:schema+] path to the schema file, relative to Rails.root
   def initialize(config={})
     @log            = StringIO.new
     @logger         = Logger.new(@log)
@@ -135,7 +135,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   def columns(table_name, name = nil)
     if @tables.size <= 1
       ActiveRecord::Migration.verbose = false
-      Kernel.load(File.join(RAILS_ROOT, @schema_path))
+      Kernel.load(File.join(Rails.root, @schema_path))
     end
 
     if table = @tables[table_name]

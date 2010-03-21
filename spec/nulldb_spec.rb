@@ -15,7 +15,11 @@ end
 class TablelessModel < ActiveRecord::Base
 end
 
-RAILS_ROOT = "RAILS_ROOT"
+module Rails
+  def self.root
+    'Rails.root'
+  end
+end
 
 describe "NullDB with no schema pre-loaded" do
   before :each do
@@ -23,14 +27,14 @@ describe "NullDB with no schema pre-loaded" do
     ActiveRecord::Migration.stub!(:verbose=)
   end
 
-  it "should load RAILS_ROOT/db/schema.rb if no alternate is specified" do
+  it "should load Rails.root/db/schema.rb if no alternate is specified" do
     ActiveRecord::Base.establish_connection :adapter => :nulldb
-    Kernel.should_receive(:load).with("RAILS_ROOT/db/schema.rb")
+    Kernel.should_receive(:load).with("Rails.root/db/schema.rb")
     ActiveRecord::Base.connection.columns('schema_info')
   end
 
-  it "should load the specified schema relative to RAILS_ROOT" do
-    Kernel.should_receive(:load).with("RAILS_ROOT/foo/myschema.rb")
+  it "should load the specified schema relative to Rails.root" do
+    Kernel.should_receive(:load).with("Rails.root/foo/myschema.rb")
     ActiveRecord::Base.establish_connection :adapter => :nulldb,
                                             :schema => "foo/myschema.rb"
     ActiveRecord::Base.connection.columns('schema_info')
