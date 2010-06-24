@@ -95,6 +95,10 @@ describe "NullDB" do
     should_have_column(Employee, :salary, :decimal)
   end
 
+  it "should return the appropriate primary key" do
+    ActiveRecord::Base.connection.primary_key('employees').should == 'id'
+  end
+
   it "should return an empty array of columns for a table-less model" do
     TablelessModel.columns.should == []
   end

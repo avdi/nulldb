@@ -25,6 +25,16 @@ end
 class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     ActiveRecord::ConnectionAdapters::AbstractAdapter
 
+  class Column < ::ActiveRecord::ConnectionAdapters::Column
+    private
+
+    def simplified_type(field_type)
+      type = super
+      type = :integer if type.nil? && sql_type == :primary_key
+      type
+    end
+  end
+
   class Statement
     attr_reader :entry_point, :content
 
@@ -140,10 +150,12 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
 
     if table = @tables[table_name]
       table.columns.map do |col_def|
-        ActiveRecord::ConnectionAdapters::Column.new(col_def.name.to_s,
-                                                      col_def.default,
-                                                      col_def.type,
-                                                      col_def.null)
+        ActiveRecord::ConnectionAdapters::NullDBAdapter::Column.new(
+          col_def.name.to_s,
+          col_def.default,
+          col_def.type,
+          col_def.null
+        )
       end
     else
       []
@@ -198,6 +210,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     with_entry_point(:select_value) do
       super(statement, name)
     end
+  end
+
+  def primary_key(table_name)
+    columns(table_name).detect { |col| col.sql_type == :primary_key }.name
   end
 
   protected
