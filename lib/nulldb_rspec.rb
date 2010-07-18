@@ -37,7 +37,7 @@ module NullDB::RSpec::NullifiedDatabase
   end
 
   def self.globally_nullify_database
-    Spec::Runner.configure do |config|
+    RSpec.configure do |config|
       nullify_database(config)
     end
   end
@@ -78,13 +78,13 @@ module NullDB::RSpec::NullifiedDatabase
   end
 
   def self.nullify_contextually?(other)
-    if defined? Spec::Rails::Example::RailsExampleGroup
-      other.ancestors.include?(Spec::Rails::Example::RailsExampleGroup)
+    if defined? RSpec::Rails::RailsExampleGroup
+      other.ancestors.include?(RSpec::Rails::RailsExampleGroup)
     else
-      other.ancestors.include?(Spec::Rails::Example::ModelExampleGroup) || 
-        other.ancestors.include?(Spec::Rails::Example::ControllerExampleGroup) || 
-        other.ancestors.include?(Spec::Rails::Example::ViewExampleGroup) || 
-        other.ancestors.include?(Spec::Rails::Example::HelperExampleGroup)
+      other.ancestors.include?(RSpec::Rails::ModelExampleGroup) || 
+        other.ancestors.include?(RSpec::Rails::ControllerExampleGroup) || 
+        other.ancestors.include?(RSpec::Rails::ViewExampleGroup) || 
+        other.ancestors.include?(RSpec::Rails::HelperExampleGroup)
     end
   end
 
