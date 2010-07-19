@@ -1,9 +1,17 @@
 require 'rubygems'
-require 'spec'
+
 $LOAD_PATH << File.join(File.dirname(__FILE__), *%w[.. vendor ginger lib])
 require 'ginger'
 require 'active_record'
 $: << File.join(File.dirname(__FILE__), "..", "lib")
+
+if ActiveRecord::VERSION::MAJOR > 2
+  require 'rspec' # rspec 2
+else
+  require 'spec' # rspec 1
+end
+
+require 'nulldb_rspec'
 
 class Employee < ActiveRecord::Base
   after_save :on_save_finished
