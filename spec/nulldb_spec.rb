@@ -225,3 +225,14 @@ describe "NullDB" do
     col.type.should == col_type
   end
 end
+
+describe NullDB::RSpec::NullifiedDatabase do
+  describe '.globally_nullify_database' do
+    it 'nullifies the database' do
+      NullDB::RSpec::NullifiedDatabase.should respond_to(:nullify_database)
+      NullDB::RSpec::NullifiedDatabase.should_receive(:nullify_database)
+      NullDB::RSpec::NullifiedDatabase.globally_nullify_database
+    end
+  end
+end
+
