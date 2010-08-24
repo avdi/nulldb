@@ -4,6 +4,15 @@ require 'singleton'
 require 'active_record/connection_adapters/abstract_adapter'
 require 'active_support/core_ext/object/returning' unless Object.new.respond_to?(:returning)
 
+unless respond_to?(:tap)
+  class Object
+    def tap
+      yield self
+      self
+    end
+  end
+end
+
 class ActiveRecord::Base
   # Instantiate a new NullDB connection.  Used by ActiveRecord internally.
   def self.nulldb_connection(config)
@@ -168,13 +177,13 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   end
 
   def select_rows(statement, name = nil)
-    returning([]) do
+    [].tap do
       self.execution_log << Statement.new(entry_point, statement)
     end
   end  
 
   def insert(statement, name = nil, primary_key = nil, object_id = nil, sequence_name = nil)
-    returning(object_id || next_unique_id) do
+    (object_id || next_unique_id).tap do
       with_entry_point(:insert) do
         super(statement, name, primary_key, object_id, sequence_name)
       end
@@ -219,7 +228,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   protected
 
   def select(statement, name)
-    returning([]) do
+    [].tap do
       self.execution_log << Statement.new(entry_point, statement)
     end
   end
