@@ -9,7 +9,6 @@ end
 
 Ginger.configure do |config|
   config.aliases["active_record"] = "activerecord"
-  config.aliases["active_record/version"] = "activerecord"
   config.aliases["active_support"] = "activesupport"
 
   versions = []
