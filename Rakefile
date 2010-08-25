@@ -33,7 +33,7 @@ end
 # specs against the right version of RSpec, we dynamically
 # define the spec task with this method.
 def define_specs_task
-  require 'active_record'
+  require 'active_record/version'
 
   if ActiveRecord::VERSION::MAJOR > 2
     # rspec 2
