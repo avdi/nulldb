@@ -128,7 +128,7 @@ nothing will be saved.
 == Version Compatibility
 
 The specs pass against ruby {1.8.6}[http://integrity186.heroku.com/null-db], {1.8.7}[http://integrity187.heroku.com/null-db]
-and {1.9.1}[http://integrity191.heroku.com/null-db], using any version of ActiveRecord since 2.0.0, including ActiveRecord 3.0.0.beta.
+and {1.9.1}[http://integrity191.heroku.com/null-db], using any version of ActiveRecord since 2.0.0, including ActiveRecord 3.0.0.
 
 == Who 
 

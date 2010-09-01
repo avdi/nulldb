@@ -12,7 +12,7 @@ begin
     gem.authors = ["Avdi Grimm", "Myron Marston"]
     gem.rubyforge_project = "nulldb"
 
-    gem.add_dependency 'activerecord', '>= 2.0.0'
+    gem.add_dependency 'activerecord', '>= 2.0.0', '< 3.1'
     gem.add_development_dependency "rspec", ">= 1.2.9"
 
     gem.files.exclude 'vendor/ginger'
