@@ -151,6 +151,9 @@ It is currently maintained by {Myron Marston}[http://github.com/myronmarston].
    - Released as activerecord-nulldb-adapter gem.
  * Version 0.2.0 (2010-03-20)
    - Rails 3 support.  All specs pass against ActiveRecord 3.0.0.beta.
+ * Version 0.2.1 (2010-09-01)
+   - Updated Rails 3 support so that nulldb works against AR 3.0.0.
+   - Add support for RSpec 2.
 
 == License
 
