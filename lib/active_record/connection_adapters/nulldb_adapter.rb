@@ -181,8 +181,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     NullObject.new
   end
 
-  def exec_query(statement, name = nil, binds = [])
-    execute(statement, name)
+  def exec_query(statement, name = 'SQL', binds = [])
+    self.execution_log << Statement.new(entry_point, statement)
     EmptyResult.new
   end
 
