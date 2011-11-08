@@ -13,6 +13,18 @@ unless respond_to?(:tap)
   end
 end
 
+unless respond_to?(:try)
+  class Object
+    def try(*a, &b)
+      if a.empty? && block_given?
+        yield self
+      else
+        __send__(*a, &b)
+      end
+    end
+  end
+end
+
 class ActiveRecord::Base
   # Instantiate a new NullDB connection.  Used by ActiveRecord internally.
   def self.nulldb_connection(config)
@@ -238,7 +250,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   end
 
   def primary_key(table_name)
-    columns(table_name).detect { |col| col.sql_type == :primary_key }.name
+    columns(table_name).detect { |col| col.sql_type == :primary_key }.try(:name)
   end
 
   protected

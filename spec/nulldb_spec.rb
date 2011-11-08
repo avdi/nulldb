@@ -76,6 +76,11 @@ describe "NullDB" do
         t.decimal :salary
       end
 
+      create_table(:employees_widgets, :id => false) do |t|
+        t.integer :employee_id
+        t.integer :widget_id
+      end
+
       add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
       add_pk_constraint "foo", "bar", {}, "baz", "buz"
     end
@@ -106,6 +111,10 @@ describe "NullDB" do
 
   it "should return the appropriate primary key" do
     ActiveRecord::Base.connection.primary_key('employees').should == 'id'
+  end
+
+  it "should return a nil primary key on habtm" do
+    ActiveRecord::Base.connection.primary_key('employees_widgets').should be_nil
   end
 
   it "should return an empty array of columns for a table-less model" do
