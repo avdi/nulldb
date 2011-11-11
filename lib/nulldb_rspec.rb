@@ -16,7 +16,7 @@ module NullDB::RSpec::NullifiedDatabase
 
     def matches?(connection)
       log = connection.execution_log_since_checkpoint
-      if entry_point == :anything
+      if @entry_point == :anything
         not log.empty?
       else
         log.include?(NullDBAdapter::Statement.new(@entry_point))
@@ -81,8 +81,8 @@ module NullDB::RSpec::NullifiedDatabase
   end
 
   def self.nullify_contextually?(other)
-    rspec_root = defined?(RSpec) ? RSpec : Spec
-    other.is_a?(rspec_root::Core::ExampleGroup)
+    rspec_root = defined?(RSpec) ? RSpec::Core : Spec
+    other.is_a?(rspec_root::ExampleGroup)
   end
 
   def self.nullify_database(receiver)

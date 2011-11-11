@@ -232,7 +232,34 @@ describe "NullDB" do
   end
 end
 
+# need a fallback db for contextual nullification
+ActiveRecord::Base.configurations['test'] = {'adapter' => 'nulldb'}
+
 describe NullDB::RSpec::NullifiedDatabase do
+  describe 'have_executed rspec matcher' do
+    before(:all) do
+      ActiveRecord::Schema.define do
+        create_table(:employees)
+      end
+    end
+
+    include NullDB::RSpec::NullifiedDatabase
+
+    before { NullDB.checkpoint }
+
+    it 'passes if an execution was made' do
+      Employee.create
+      Employee.connection.should have_executed(:insert)
+    end
+
+    it 'fails if an execution was not made' do
+      rspec_root = defined?(RSpec) ? RSpec : Spec
+
+      lambda { Employee.connection.should have_executed(:insert) }.
+        should raise_error(rspec_root::Expectations::ExpectationNotMetError)
+    end
+  end
+
   describe '.globally_nullify_database' do
     it 'nullifies the database' do
       NullDB::RSpec::NullifiedDatabase.should respond_to(:nullify_database)
