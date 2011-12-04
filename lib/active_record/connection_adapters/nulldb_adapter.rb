@@ -85,6 +85,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
 
   TableDefinition = ActiveRecord::ConnectionAdapters::TableDefinition
 
+  class IndexDefinition < Struct.new(:table, :name, :unique, :columns, :lengths, :orders)
+  end
+
   class NullObject
     def method_missing(*args, &block)
       nil
@@ -117,6 +120,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     @logger         = Logger.new(@log)
     @last_unique_id = 0
     @tables         = {'schema_info' =>  TableDefinition.new(nil)}
+    @indexes        = Hash.new { |hash, key| hash[key] = [] }
     @schema_path    = config.fetch(:schema){ "db/schema.rb" }
     @config         = config.merge(:adapter => :nulldb)
     super(nil, @logger)
@@ -160,6 +164,11 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     @tables[table_name] = table_definition
   end
 
+  def add_index(table_name, column_names, options = {})
+    index_name, index_type, ignore = add_index_options(table_name, column_names, options)
+    @indexes[table_name] << IndexDefinition.new(table_name, index_name, (index_type == 'UNIQUE'), column_names, [], [])
+  end
+
   def add_fk_constraint(*args)
     # NOOP
   end
@@ -197,6 +206,11 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     else
       []
     end
+  end
+
+  # Retrieve table indexes as defined by the schema
+  def indexes(table_name, name = nil)
+    @indexes[table_name]
   end
 
   def execute(statement, name = nil)
