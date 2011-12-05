@@ -1,3 +1,4 @@
 require 'nulldb/core'
 
-NullDB.configure {|ndb| ndb.project_root = Rails.root}
+# Need to defer calling Rails.root because when bundler loads, Rails.root is nil
+NullDB.configure {|ndb| def ndb.project_root;Rails.root;end}
