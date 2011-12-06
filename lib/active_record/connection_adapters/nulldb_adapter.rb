@@ -224,7 +224,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   end
   alias :create :insert
 
-  def update(statement, name=nil)
+  def update(statement, name=nil, binds = [])
     with_entry_point(:update) do
       super(statement, name)
     end
