@@ -15,7 +15,7 @@ Ginger.configure do |config|
 
   # Rails 3 only works on Ruby 1.8.7 and 1.9.2
   if %w[1.8.7 1.9.2].include?(RUBY_VERSION)
-    versions += %w(3.1.1 3.1.0 3.0.8)
+    versions += %w(3.2.1 3.1.1 3.1.0 3.0.8)
   end
   versions += %w( 2.3.14 2.3.8 2.3.5 2.3.4 2.3.3 2.3.2 )
   versions += %w(
