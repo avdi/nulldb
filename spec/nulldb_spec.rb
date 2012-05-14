@@ -268,6 +268,7 @@ describe NullDB::RSpec::NullifiedDatabase do
     before { NullDB.checkpoint }
 
     it 'passes if an execution was made' do
+      Kernel.stub(:load)
       Employee.create
       Employee.connection.should have_executed(:insert)
     end

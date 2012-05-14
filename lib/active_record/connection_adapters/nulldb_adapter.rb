@@ -170,6 +170,30 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     @indexes[table_name] << IndexDefinition.new(table_name, index_name, (index_type == 'UNIQUE'), column_names, [], [])
   end
 
+  unless instance_methods.include? :add_index_options
+    def add_index_options(table_name, column_name, options = {})
+      column_names = Array.wrap(column_name)
+      index_name   = index_name(table_name, :column => column_names)
+
+      if Hash === options # legacy support, since this param was a string
+        index_type = options[:unique] ? "UNIQUE" : ""
+        index_name = options[:name].to_s if options.key?(:name)
+      else
+        index_type = options
+      end
+
+      if index_name.length > index_name_length
+        raise ArgumentError, "Index name '#{index_name}' on table '#{table_name}' is too long; the limit is #{index_name_length} characters"
+      end
+      if index_name_exists?(table_name, index_name, false)
+        raise ArgumentError, "Index name '#{index_name}' on table '#{table_name}' already exists"
+      end
+      index_columns = quoted_columns_for_index(column_names, options).join(", ")
+
+      [index_name, index_type, index_columns]
+    end
+  end
+
   def add_fk_constraint(*args)
     # NOOP
   end
