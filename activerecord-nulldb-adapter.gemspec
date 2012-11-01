@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
      "lib/activerecord-nulldb-adapter.rb",
      "lib/active_record/connection_adapters/nulldb_adapter.rb",
      "lib/nulldb/arel_compiler.rb",
+     "lib/nulldb/rails.rb",
+     "lib/nulldb/core.rb",
      "lib/nulldb_rspec.rb",
      "lib/tasks/database.rake",
      "spec/nulldb_spec.rb",
