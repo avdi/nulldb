@@ -166,6 +166,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   end
 
   def add_index(table_name, column_names, options = {})
+    column_names = Array.wrap(column_names).map(&:to_s)
     index_name, index_type, ignore = add_index_options(table_name, column_names, options)
     @indexes[table_name] << IndexDefinition.new(table_name, index_name, (index_type == 'UNIQUE'), column_names, [], [])
   end
