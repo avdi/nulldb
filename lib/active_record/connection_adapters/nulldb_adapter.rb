@@ -94,9 +94,18 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     end
   end
 
-  class EmptyResult
+  class EmptyResult < Array
+    attr_writer :columns
     def rows
       []
+    end
+
+    def column_types
+      columns.map{|col| col.type}
+    end
+
+    def columns
+      @columns ||= []
     end
   end
 
@@ -119,7 +128,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     @log            = StringIO.new
     @logger         = Logger.new(@log)
     @last_unique_id = 0
-    @tables         = {'schema_info' =>  TableDefinition.new(nil)}
+    @tables         = {'schema_info' => new_table_definition(nil)}
     @indexes        = Hash.new { |hash, key| hash[key] = [] }
     @schema_path    = config.fetch(:schema){ "db/schema.rb" }
     @config         = config.merge(:adapter => :nulldb)
@@ -155,7 +164,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   end
 
   def create_table(table_name, options = {})
-    table_definition = ActiveRecord::ConnectionAdapters::TableDefinition.new(self)
+    table_definition = new_table_definition(self, table_name, options.delete(:temporary), options)
+
     unless options[:id] == false
       table_definition.primary_key(options[:primary_key] || "id")
     end
@@ -252,7 +262,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     [].tap do
       self.execution_log << Statement.new(entry_point, statement)
     end
-  end  
+  end
 
   def insert(statement, name = nil, primary_key = nil, object_id = nil, sequence_name = nil, binds = [])
     (object_id || next_unique_id).tap do
@@ -281,13 +291,13 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     end
   end
 
-  def select_one(statement, name=nil)
+  def select_one(statement, name=nil, binds = [])
     with_entry_point(:select_one) do
       super(statement, name)
     end
   end
 
-  def select_value(statement, name=nil)
+  def select_value(statement, name=nil, binds = [])
     with_entry_point(:select_value) do
       super(statement, name)
     end
@@ -299,13 +309,19 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
 
   protected
 
-  def select(statement, name, binds = [])
-    [].tap do
+  def select(statement, name = nil, binds = [])
+    EmptyResult.new.tap do |r|
+      r.columns = columns_for(name)
       self.execution_log << Statement.new(entry_point, statement)
     end
   end
 
   private
+
+  def columns_for(table_name)
+    table_def = @tables[table_name]
+    table_def ? table_def.columns : []
+  end
 
   def next_unique_id
     @last_unique_id += 1
@@ -332,6 +348,16 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
       yield
     ensure
       Thread.current[name] = old_value
+    end
+  end
+
+  def new_table_definition(adapter = nil, table_name = nil, is_temporary = nil, options = {})
+    if TableDefinition.instance_method(:initialize).arity > 1
+      # Rails 4.0.0.rc1 and up
+      TableDefinition.new(native_database_types, table_name, is_temporary, options)
+    else
+      # Fallback for Rails 2 and 3
+      TableDefinition.new(adapter)
     end
   end
 end
