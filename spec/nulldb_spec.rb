@@ -221,6 +221,11 @@ describe "NullDB" do
     should_not_contain_statement(cxn, :select_value)
     Employee.count_by_sql("frobozz")
     should_contain_statement(cxn, :select_value)
+
+    cxn.checkpoint!
+    should_not_contain_statement(cxn, :select_values)
+    cxn.select_values("")
+    should_contain_statement(cxn, :select_values)
   end
 
   it "should allow #finish to be called on the result of #execute" do

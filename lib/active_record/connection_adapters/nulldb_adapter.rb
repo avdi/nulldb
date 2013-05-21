@@ -303,6 +303,12 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     end
   end
 
+  def select_values(statement, name=nil)
+    with_entry_point(:select_values) do
+      super(statement, name)
+    end
+  end
+
   def primary_key(table_name)
     columns(table_name).detect { |col| col.sql_type == :primary_key }.try(:name)
   end
