@@ -358,12 +358,13 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
   end
 
   def new_table_definition(adapter = nil, table_name = nil, is_temporary = nil, options = {})
-    if TableDefinition.instance_method(:initialize).arity > 1
-      # Rails 4.0.0.rc1 and up
+    case ::ActiveRecord::VERSION::MAJOR
+    when 4
       TableDefinition.new(native_database_types, table_name, is_temporary, options)
-    else
-      # Fallback for Rails 2 and 3
+    when 2,3
       TableDefinition.new(adapter)
+    else
+      raise "Unsupported ActiveRecord version #{::ActiveRecord::VERSION::STRING}"
     end
   end
 end
