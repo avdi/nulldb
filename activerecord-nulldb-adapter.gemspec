@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
      "spec/nulldb_spec.rb",
      "spec/spec.opts"
   ]
-  s.homepage = %q{http://github.com/nulldb/nulldb}
+  s.homepage = %q{https://github.com/nulldb/nulldb}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{nulldb}
