@@ -25,7 +25,7 @@ RAILS_ROOT/db/schema.rb.  You can override that by setting the
 +schema+ option:
 
   ActiveRecord::Base.establish_connection :adapter => :nulldb,
-                                          :schema  => foo/myschema.rb
+                                          :schema  => 'foo/myschema.rb'
 
 NullDB comes with RSpec integration.  To replace the database with
 NullDB in all of your specs, put the following in your
