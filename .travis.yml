@@ -1,4 +1,6 @@
 language: ruby
+cache: bundler
+
 rvm:
   - 1.9.3
   - 2.0.0
@@ -8,6 +10,10 @@ rvm:
   - jruby-head
   - rbx-head
   - 2.1.0
+
+matrix:
+  fast_finish: true
+
 gemfile:
   - Gemfile
   - gemfiles/rails-3.0.gemfile
