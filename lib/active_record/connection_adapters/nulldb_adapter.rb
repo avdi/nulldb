@@ -204,6 +204,14 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     end
   end
 
+  unless instance_methods.include? :index_name_exists?
+    def index_name_exists?(table_name, index_name, default)
+      return default unless respond_to?(:indexes)
+      index_name = index_name.to_s
+      indexes(table_name).detect { |i| i.name == index_name }
+    end
+  end
+
   def add_fk_constraint(*args)
     # NOOP
   end
