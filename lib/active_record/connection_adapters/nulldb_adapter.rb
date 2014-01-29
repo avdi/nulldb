@@ -2,6 +2,7 @@ require 'logger'
 require 'stringio'
 require 'singleton'
 require 'pathname'
+require 'active_support'
 require 'active_record/connection_adapters/abstract_adapter'
 require 'nulldb/core'
 
