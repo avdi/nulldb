@@ -5,14 +5,20 @@ rvm:
   - 1.9.3
   - 2.0.0
   - 2.1.0
-  # - ruby-head
-  # - jruby-19mode
-  # - jruby-head
-  # - rbx-19mode
-  # - rbx-head
+  - jruby
+  - rbx
+  - ruby-head
+  - jruby-head
+  - rbx-head
 
-# matrix:
+matrix:
   # fast_finish: true
+  allow_failures:
+    - rvm: jruby
+    - rvm: rbx
+    - rvm: ruby-head
+    - rvm: jruby-head
+    - rvm: rbx-head
 
 gemfile:
   - gemfiles/activerecord_2.3.gemfile
