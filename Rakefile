@@ -12,6 +12,7 @@ begin
     gem.homepage = "http://github.com/nulldb/nulldb"
     gem.authors = ["Avdi Grimm", "Myron Marston"]
     gem.rubyforge_project = "nulldb"
+    gem.license = "MIT"
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

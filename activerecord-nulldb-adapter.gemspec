@@ -27,9 +27,11 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "activerecord-nulldb-adapter.gemspec",
-    "gemfiles/rails-3.0.gemfile",
-    "gemfiles/rails-3.1.gemfile",
-    "gemfiles/rails-3.2.gemfile",
+    "gemfiles/activerecord_2.3.gemfile",
+    "gemfiles/activerecord_3.0.gemfile",
+    "gemfiles/activerecord_3.1.gemfile",
+    "gemfiles/activerecord_3.2.gemfile",
+    "gemfiles/activerecord_4.0.gemfile",
     "lib/active_record/connection_adapters/nulldb_adapter.rb",
     "lib/activerecord-nulldb-adapter.rb",
     "lib/nulldb.rb",
@@ -42,6 +44,7 @@ Gem::Specification.new do |s|
     "spec/spec.opts"
   ]
   s.homepage = "http://github.com/nulldb/nulldb"
+  s.licenses = ["MIT"]
   s.rubyforge_project = "nulldb"
   s.rubygems_version = "2.2.0"
   s.summary = "The Null Object pattern as applied to ActiveRecord database adapters"
@@ -56,6 +59,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_development_dependency(%q<rake>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<appraisal>, [">= 0"])
     else
       s.add_dependency(%q<activerecord>, [">= 2.0.0"])
       s.add_dependency(%q<iconv>, [">= 0"])
@@ -63,6 +67,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_dependency(%q<rake>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<appraisal>, [">= 0"])
     end
   else
     s.add_dependency(%q<activerecord>, [">= 2.0.0"])
@@ -71,6 +76,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
     s.add_dependency(%q<rake>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<appraisal>, [">= 0"])
   end
 end
 
