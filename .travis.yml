@@ -7,18 +7,12 @@ rvm:
   - 2.1.0
   - jruby
   - rbx
-  - ruby-head
-  - jruby-head
-  - rbx-head
 
 matrix:
-  # fast_finish: true
+  fast_finish: true
   allow_failures:
     - rvm: jruby
     - rvm: rbx
-    - rvm: ruby-head
-    - rvm: jruby-head
-    - rvm: rbx-head
 
 gemfile:
   - gemfiles/activerecord_2.3.gemfile
