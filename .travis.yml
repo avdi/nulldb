@@ -15,7 +15,8 @@ matrix:
   fast_finish: true
 
 gemfile:
-  - Gemfile
+  # - Gemfile
   # - gemfiles/rails-3.0.gemfile
   # - gemfiles/rails-3.1.gemfile
   # - gemfiles/rails-3.2.gemfile
+  - gemfiles/activerecord-3.0.gemfile
