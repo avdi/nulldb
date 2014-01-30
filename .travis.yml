@@ -11,8 +11,8 @@ rvm:
   # - rbx-19mode
   # - rbx-head
 
-matrix:
-  fast_finish: true
+# matrix:
+  # fast_finish: true
 
 gemfile:
   - gemfiles/activerecord-2.3.gemfile
