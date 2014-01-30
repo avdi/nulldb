@@ -1,5 +1,6 @@
 language: ruby
 cache: bundler
+bundler_args: --without development
 
 rvm:
   - 1.9.3
@@ -15,8 +16,8 @@ matrix:
   fast_finish: true
 
 gemfile:
-  # - Gemfile
-  # - gemfiles/rails-3.0.gemfile
-  # - gemfiles/rails-3.1.gemfile
-  # - gemfiles/rails-3.2.gemfile
+  - gemfiles/activerecord-2.3.gemfile
   - gemfiles/activerecord-3.0.gemfile
+  - gemfiles/activerecord-3.1.gemfile
+  - gemfiles/activerecord-3.2.gemfile
+  - gemfiles/activerecord-4.0.gemfile
