@@ -93,6 +93,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter <
     def method_missing(*args, &block)
       nil
     end
+
+    def to_a
+      []
+    end
   end
 
   class EmptyResult < Array
