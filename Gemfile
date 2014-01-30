@@ -11,3 +11,8 @@ group :development, :test do
   gem 'rspec', '>= 1.2.9'
   gem 'rake'
 end
+
+group :development do
+  gem 'jeweler'
+  gem 'appraisal', :github => 'thoughtbot/appraisal'
+end
