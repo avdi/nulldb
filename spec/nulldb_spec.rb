@@ -1,5 +1,12 @@
 require 'rubygems'
 
+# Use Coveralls/SimpleCov when available
+begin
+  require 'coveralls'
+  Coveralls.wear!
+rescue LoadError
+end
+
 require 'active_record'
 require 'active_record/version'
 $: << File.join(File.dirname(__FILE__), "..", "lib")

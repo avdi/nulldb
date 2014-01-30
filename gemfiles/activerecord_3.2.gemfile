@@ -17,4 +17,5 @@ end
 
 platforms :ruby_20, :ruby_21 do
   gem "iconv"
+  gem "coveralls", :group=>:test, :require=>false
 end
