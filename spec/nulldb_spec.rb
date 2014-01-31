@@ -82,7 +82,7 @@ describe "NullDB" do
         t.integer :widget_id
       end
 
-      add_index "employees", ["name"], :name => "index_employees_on_name"
+      add_index "employees", :name, :name => "index_employees_on_name"
       add_index "employees", ["employee_number"], :name => "index_employees_on_employee_number", :unique => true
       add_index "employees_widgets", ["employee_id", "widget_id"], :name => "my_index"
 
