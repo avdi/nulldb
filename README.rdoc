@@ -137,11 +137,11 @@ nothing will be saved.
 == Who
 
 NullDB was originally written by Avdi Grimm <mailto:avdi@avdi.org>.
-It is currently maintained by {Myron Marston}[http://github.com/myronmarston].
+It is currently maintained by {Bram de Vries}[https://github.com/blaet].
 
 == Where
 
-* Homepage: http://github.com/nulldb/nulldb
+* Homepage: https://github.com/nulldb/nulldb
 
 == License
 
