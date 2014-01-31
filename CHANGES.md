@@ -1,3 +1,11 @@
+0.3.0 (2014-01-31)
+-----------
+- Drops 1.8.7 support.
+- Adds support for Ruby 2.0, 2.1 and ActiveRecord 4.
+- Fixes ActiveRecord 2.3 support on Ruby 2 and up.
+- Misc small fixes
+
+
 0.2.1 (2010-09-01)
 -----------
 - Updated Rails 3 support so that nulldb works against AR 3.0.0.
