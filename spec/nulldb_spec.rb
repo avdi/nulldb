@@ -1,11 +1,7 @@
 require 'rubygems'
 
-# Use Coveralls/SimpleCov when available
-begin
-  require 'coveralls'
-  Coveralls.wear!
-rescue LoadError
-end
+require 'simplecov'
+SimpleCov.start
 
 require 'active_record'
 require 'active_record/version'
