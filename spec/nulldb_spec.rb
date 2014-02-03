@@ -1,7 +1,11 @@
 require 'rubygems'
 
-require 'simplecov'
-SimpleCov.start
+# Optional simplecov loading
+begin
+  require 'simplecov'
+  SimpleCov.start
+rescue
+end
 
 require 'active_record'
 require 'active_record/version'
