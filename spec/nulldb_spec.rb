@@ -4,7 +4,7 @@ require 'rubygems'
 begin
   require 'simplecov'
   SimpleCov.start
-rescue
+rescue LoadError
 end
 
 require 'active_record'
