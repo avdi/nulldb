@@ -19,3 +19,6 @@ appraise "activerecord-4.0" do
   gem "activerecord", "~> 4.0.0"
 end
 
+appraise "activerecord-4.1.beta" do
+  gem "activerecord", "~> 4.1.0.beta"
+end
