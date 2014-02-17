@@ -2,6 +2,7 @@
 
 source "https://rubygems.org"
 
+gem "iconv", :platforms=>:ruby
 gem "activerecord", "~> 2.3.0"
 
 group :development, :test do
@@ -13,9 +14,5 @@ end
 group :development do
   gem "jeweler"
   gem "appraisal", :github=>"thoughtbot/appraisal"
-end
-
-platforms :ruby_20, :ruby_21 do
-  gem "iconv"
-  gem "coveralls", :group=>:test, :require=>false
+  gem "simplecov", :require=>false
 end

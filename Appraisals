@@ -1,4 +1,5 @@
 appraise "activerecord-2.3" do
+  gem 'iconv', :platforms => :ruby
   gem "activerecord", "~> 2.3.0"
 end
 
