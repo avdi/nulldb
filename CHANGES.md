@@ -1,3 +1,8 @@
+0.3.1 (2014-02-17)
+-----------
+- Removes accidental dependency on iconv. Fixing JRuby support.
+
+
 0.3.0 (2014-01-31)
 -----------
 - Drops 1.8.7 support.
