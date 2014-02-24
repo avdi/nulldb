@@ -1,4 +1,3 @@
-
 {<img src="https://badge.fury.io/rb/activerecord-nulldb-adapter.png" alt="Gem Version" />}[http://badge.fury.io/rb/activerecord-nulldb-adapter]
 {<img src="https://codeclimate.com/github/nulldb/nulldb.png" />}[https://codeclimate.com/github/nulldb/nulldb]
 {<img src="https://travis-ci.org/nulldb/nulldb.png?branch=master" alt="Build Status" />}[https://travis-ci.org/nulldb/nulldb]
@@ -67,7 +66,7 @@ include the same module inside a context:
     # ...
   end
 
-If you want to have NullDB enabled by default but disabled for particular contexts then (see this post)[http://andywaite.com/2011/5/18/rspec-disable-nulldb]
+If you want to have NullDB enabled by default but disabled for particular contexts then (see this post)[https://web.archive.org/web/20120419204019/http://andywaite.com/2011/5/18/rspec-disable-nulldb]
 
 NullDB::Rspec provides some custom matcher support for verifying
 expectations about interactions with the database:
