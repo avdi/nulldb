@@ -10,6 +10,6 @@ end
 
 group :development do
   gem 'jeweler'
-  gem 'appraisal', :github => 'thoughtbot/appraisal'
+  gem 'appraisal'
   gem 'simplecov', :require => false
 end
