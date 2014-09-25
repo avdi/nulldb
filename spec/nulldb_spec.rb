@@ -297,13 +297,6 @@ describe NullDB::RSpec::NullifiedDatabase do
       allow( Kernel ).to receive :load
       Employee.create
     end
-
-    it 'fails if an execution was not made' do
-      rspec_root = defined?(RSpec) ? RSpec : Spec
-
-      lambda { Employee.connection.should have_executed(:insert) }.
-        should raise_error(rspec_root::Expectations::ExpectationNotMetError)
-    end
   end
 
   describe '.globally_nullify_database' do
