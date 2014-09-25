@@ -158,7 +158,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     EmptyResult.new
   end
 
-  def select_rows(statement, name = nil)
+  def select_rows(statement, name = nil, binds = [])
     [].tap do
       self.execution_log << Statement.new(entry_point, statement)
     end
