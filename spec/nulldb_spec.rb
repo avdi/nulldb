@@ -1,5 +1,12 @@
 require 'rubygems'
 
+# Optional simplecov loading
+begin
+  require 'simplecov'
+  SimpleCov.start
+rescue LoadError
+end
+
 require 'active_record'
 require 'active_record/version'
 $: << File.join(File.dirname(__FILE__), "..", "lib")
@@ -26,25 +33,25 @@ NullDB.configure {|ndb| ndb.project_root = 'Rails.root'}
 
 describe "NullDB with no schema pre-loaded" do
   before :each do
-    Kernel.stub!(:load)
-    ActiveRecord::Migration.stub!(:verbose=)
+    allow( Kernel ).to receive :load
+    allow( ActiveRecord::Migration ).to receive :verbose=
   end
 
   it "should load Rails.root/db/schema.rb if no alternate is specified" do
     ActiveRecord::Base.establish_connection :adapter => :nulldb
-    Kernel.should_receive(:load).with("Rails.root/db/schema.rb")
+    expect( Kernel ).to receive(:load).with("Rails.root/db/schema.rb")
     ActiveRecord::Base.connection.columns('schema_info')
   end
 
   it "should load the specified schema relative to Rails.root" do
-    Kernel.should_receive(:load).with("Rails.root/foo/myschema.rb")
+    expect( Kernel ).to receive(:load).with("Rails.root/foo/myschema.rb")
     ActiveRecord::Base.establish_connection :adapter => :nulldb,
                                             :schema => "foo/myschema.rb"
     ActiveRecord::Base.connection.columns('schema_info')
   end
 
   it "should suppress migration output" do
-    ActiveRecord::Migration.should_receive(:verbose=).with(false)
+    expect( ActiveRecord::Migration).to receive(:verbose=).with(false)
     ActiveRecord::Base.establish_connection :adapter => :nulldb,
                                             :schema => "foo/myschema.rb"
     ActiveRecord::Base.connection.columns('schema_info')
@@ -75,10 +82,10 @@ describe "NullDB" do
         t.integer :widget_id
       end
 
-      add_index "employees", ["name"], :name => "index_employees_on_name"
+      add_index "employees", :name, :name => "index_employees_on_name"
       add_index "employees", ["employee_number"], :name => "index_employees_on_employee_number", :unique => true
       add_index "employees_widgets", ["employee_id", "widget_id"], :name => "my_index"
-      
+
       add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
       add_pk_constraint "foo", "bar", {}, "baz", "buz"
     end
@@ -92,12 +99,11 @@ describe "NullDB" do
   end
 
   it "should set the @config instance variable so plugins that assume its there can use it" do
-    Employee.connection.instance_variable_get(:@config)[:adapter].should == :nulldb
+    expect( Employee.connection.instance_variable_get(:@config)[:adapter]).to eq :nulldb
   end
 
   it "should enable instantiation of AR objects without a database" do
-    @employee.should_not be_nil
-    @employee.should be_a_kind_of(ActiveRecord::Base)
+    expect( @employee ).to be_a_kind_of(ActiveRecord::Base)
   end
 
   it "should remember columns defined in migrations" do
@@ -108,94 +114,97 @@ describe "NullDB" do
   end
 
   it "should return the appropriate primary key" do
-    ActiveRecord::Base.connection.primary_key('employees').should == 'id'
+    expect( ActiveRecord::Base.connection.primary_key('employees') ).to eq 'id'
   end
 
   it "should return a nil primary key on habtm" do
-    ActiveRecord::Base.connection.primary_key('employees_widgets').should be_nil
+    expect( ActiveRecord::Base.connection.primary_key('employees_widgets') ).to eq nil
   end
 
   it "should return an empty array of columns for a table-less model" do
-    TablelessModel.columns.should == []
+    expect( TablelessModel.columns).to eq []
   end
 
   it "should enable simulated saving of AR objects" do
-    lambda { @employee.save! }.should_not raise_error
+    expect{ @employee.save! }.to_not raise_error
   end
 
   it "should enable AR callbacks during simulated save" do
-    @employee.should_receive(:on_save_finished)
+    expect( @employee ).to receive :on_save_finished
     @employee.save
   end
 
   it "should enable simulated deletes of AR objects" do
-    lambda { @employee.destroy }.should_not raise_error
+    expect{ @employee.destroy }.to_not raise_error
   end
 
   it "should enable simulated creates of AR objects" do
     emp = Employee.create(:name => "Bob Jones")
-    emp.name.should == "Bob Jones"
+    expect( emp.name ).to eq "Bob Jones"
   end
 
   it "should generate new IDs when inserting unsaved objects" do
     cxn = Employee.connection
     id1 = cxn.insert("some sql", "SomeClass Create", "id", nil, nil)
     id2 = cxn.insert("some sql", "SomeClass Create", "id", nil, nil)
-    id2.should == (id1 + 1)
+    expect( id2 ).to eq (id1 + 1)
   end
 
   it "should re-use object ID when inserting saved objects" do
     cxn = Employee.connection
     id1 = cxn.insert("some sql", "SomeClass Create", "id", 23, nil)
-    id1.should == 23
+    expect( id1 ).to eq 23
   end
 
   it "should log executed SQL statements" do
-    cxn = @employee.connection
+    cxn = Employee.connection
     exec_count = cxn.execution_log.size
     @employee.save!
-    cxn.execution_log.size.should == (exec_count + 1)
+    expect( cxn.execution_log.size ).to eq (exec_count + 1)
   end
 
   it "should have the adapter name 'NullDB'" do
-    @employee.connection.adapter_name.should == "NullDB"
+    expect( Employee.connection.adapter_name ).to eq "NullDB"
   end
 
   it "should support migrations" do
-    @employee.connection.supports_migrations?.should be_true
+    expect( Employee.connection.supports_migrations? ).to eq true
   end
 
   it "should always have a schema_info table definition" do
-    @employee.connection.tables.should include("schema_info")
+    expect( Employee.connection.tables ).to include "schema_info"
   end
 
   it "should return an empty array from #select" do
-    @employee.connection.select_all("who cares", "blah").should == []
+    result = Employee.connection.select_all("who cares", "blah")
+    expect( result ).to eq []
   end
 
   it "should provide a way to set log checkpoints" do
-    cxn = @employee.connection
+    cxn = Employee.connection
     @employee.save!
-    cxn.execution_log_since_checkpoint.size.should > 0
+    expect( cxn.execution_log_since_checkpoint.size ).to be > 0
+
     cxn.checkpoint!
-    cxn.execution_log_since_checkpoint.size.should == 0
+    expect( cxn.execution_log_since_checkpoint.size ).to eq 0
+
     @employee.salary = @employee.salary + 1
     @employee.save!
-    cxn.execution_log_since_checkpoint.size.should == 1
+    expect( cxn.execution_log_since_checkpoint.size ).to eq 1
   end
 
   def should_contain_statement(cxn, entry_point)
-    cxn.execution_log_since_checkpoint.should \
+    expect( cxn.execution_log_since_checkpoint).to \
       include(ActiveRecord::ConnectionAdapters::NullDBAdapter::Statement.new(entry_point))
   end
 
   def should_not_contain_statement(cxn, entry_point)
-    cxn.execution_log_since_checkpoint.should_not \
+    expect( cxn.execution_log_since_checkpoint ).to_not \
       include(ActiveRecord::ConnectionAdapters::NullDBAdapter::Statement.new(entry_point))
   end
 
   it "should tag logged statements with their entry point" do
-    cxn = @employee.connection
+    cxn = Employee.connection
 
     should_not_contain_statement(cxn, :insert)
     @employee.save
@@ -214,47 +223,57 @@ describe "NullDB" do
 
     cxn.checkpoint!
     should_not_contain_statement(cxn, :select_all)
-    Employee.find(:all)
+    Employee.all.each do |emp|; end
     should_contain_statement(cxn, :select_all)
 
     cxn.checkpoint!
     should_not_contain_statement(cxn, :select_value)
     Employee.count_by_sql("frobozz")
     should_contain_statement(cxn, :select_value)
+
+    cxn.checkpoint!
+    should_not_contain_statement(cxn, :select_values)
+    cxn.select_values("")
+    should_contain_statement(cxn, :select_values)
   end
 
   it "should allow #finish to be called on the result of #execute" do
-    @employee.connection.execute("blah").finish
+    Employee.connection.execute("blah").finish
+  end
+
+  it "should #to_a return empty array on the result of #execute" do
+    result = Employee.connection.execute("blah")
+    expect( result.to_a ).to be_a Array
+    expect( result.to_a ).to be_empty
   end
 
   def should_have_column(klass, col_name, col_type)
     col = klass.columns_hash[col_name.to_s]
-    col.should_not be_nil
-    col.type.should == col_type
+    expect(col.type).to eq col_type
   end
 
-  
+
   it "should support adding indexes" do
-    Employee.connection.indexes('employees').size.should == 2
-    Employee.connection.indexes('employees_widgets').size.should == 1
+    expect( Employee.connection.indexes('employees').size ).to eq 2
+    expect( Employee.connection.indexes('employees_widgets').size ).to eq 1
   end
-  
+
   it "should support unique indexes" do
-    Employee.connection.indexes('employees').detect{|idx| idx.columns == ["name"]}.unique.should be_false
-    Employee.connection.indexes('employees').detect{|idx| idx.columns == ["employee_number"]}.unique.should be_true
+    expect( Employee.connection.indexes('employees').detect{|idx| idx.columns == ["name"]}.unique ).to eq false
+    expect( Employee.connection.indexes('employees').detect{|idx| idx.columns == ["employee_number"]}.unique ).to eq true
   end
-  
+
   it "should support multi-column indexes" do
-    Employee.connection.indexes('employees_widgets').first.columns.should == ["employee_id", "widget_id"]
+    expect( Employee.connection.indexes('employees_widgets').first.columns).to eq ["employee_id", "widget_id"]
   end
-  
+
   it "should support custom index names" do
-    Employee.connection.indexes('employees_widgets').first.name.should == 'my_index'
+    expect( Employee.connection.indexes('employees_widgets').first.name ).to eq 'my_index'
   end
 
   it 'should handle ActiveRecord::ConnectionNotEstablished' do
-    ActiveRecord::Base.should_receive(:connection_pool).and_raise(ActiveRecord::ConnectionNotEstablished)
-    lambda { NullDB.nullify }.should_not raise_error(ActiveRecord::ConnectionNotEstablished)
+    expect( ActiveRecord::Base ).to receive(:connection_pool).and_raise(ActiveRecord::ConnectionNotEstablished)
+    expect { NullDB.nullify }.to_not raise_error
   end
 end
 
@@ -274,25 +293,17 @@ describe NullDB::RSpec::NullifiedDatabase do
     before { NullDB.checkpoint }
 
     it 'passes if an execution was made' do
-      Kernel.stub(:load)
+      expect( Employee.connection ).to receive(:insert)
+      allow( Kernel ).to receive :load
       Employee.create
-      Employee.connection.should have_executed(:insert)
-    end
-
-    it 'fails if an execution was not made' do
-      rspec_root = defined?(RSpec) ? RSpec : Spec
-
-      lambda { Employee.connection.should have_executed(:insert) }.
-        should raise_error(rspec_root::Expectations::ExpectationNotMetError)
     end
   end
 
   describe '.globally_nullify_database' do
     it 'nullifies the database' do
-      NullDB::RSpec::NullifiedDatabase.should respond_to(:nullify_database)
-      NullDB::RSpec::NullifiedDatabase.should_receive(:nullify_database)
+      expect( NullDB::RSpec::NullifiedDatabase ).to respond_to(:nullify_database)
+      expect( NullDB::RSpec::NullifiedDatabase ).to receive(:nullify_database)
       NullDB::RSpec::NullifiedDatabase.globally_nullify_database
     end
   end
 end
-
