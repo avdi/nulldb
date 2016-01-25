@@ -11,6 +11,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
       case sql_type
       when :primary_key
         :integer
+      when :string
+        :string
       end
     end
 
