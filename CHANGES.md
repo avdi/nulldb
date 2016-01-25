@@ -1,3 +1,9 @@
+0.3.2 (2016-01-25)
+-----------
+- Deprecates support for MRI 1.9.3 and adds support for 2.3.x.
+- Fixes :string column type fetching for AR 4.1.
+
+
 0.3.1 (2014-02-17)
 -----------
 - Removes accidental dependency on iconv. Fixing JRuby support.
