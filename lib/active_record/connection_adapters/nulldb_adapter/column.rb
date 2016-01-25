@@ -1,11 +1,18 @@
 class ActiveRecord::ConnectionAdapters::NullDBAdapter
   class Column < ::ActiveRecord::ConnectionAdapters::Column
+
     private
 
     def simplified_type(field_type)
-      type = super
-      type = :integer if type.nil? && sql_type == :primary_key
-      type
+      super || simplified_type_from_sql_type
     end
+
+    def simplified_type_from_sql_type
+      case sql_type
+      when :primary_key
+        :integer
+      end
+    end
+
   end
 end
