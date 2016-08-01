@@ -17,6 +17,10 @@ matrix:
     - rvm: jruby
     - rvm: rbx
   exclude:
+    - rvm: 1.9.3
+      gemfile: gemfiles/activerecord_5.0.gemfile
+    - rvm: 2.1.10
+      gemfile: gemfiles/activerecord_5.0.gemfile
     - rvm: 2.1.10
       gemfile: gemfiles/activerecord_2.3.gemfile
     - rvm: 2.2.5
@@ -32,3 +36,4 @@ gemfile:
   - gemfiles/activerecord_4.0.gemfile
   - gemfiles/activerecord_4.1.gemfile
   - gemfiles/activerecord_4.2.gemfile
+  - gemfiles/activerecord_5.0.gemfile

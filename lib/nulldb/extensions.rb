@@ -33,7 +33,8 @@ end
 
 module ActiveRecord
   # Just make sure you have the latest version of your schema
-  class Schema < Migration
+  superclass = ActiveRecord::VERSION::MAJOR == 5 ? Migration[5.0] : Migration
+  class Schema < superclass
     def self.define(info={}, &block)
       instance_eval(&block)
     end
