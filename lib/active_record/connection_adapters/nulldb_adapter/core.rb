@@ -259,7 +259,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   def new_table_definition(adapter = nil, table_name = nil, is_temporary = nil, options = {})
     case ::ActiveRecord::VERSION::MAJOR
     when 5
-      TableDefinition.new(table_name, is_temporary, options.except(:id))
+      TableDefinition.new(table_name, is_temporary, options.except(:id), nil)
     when 4
       TableDefinition.new(native_database_types, table_name, is_temporary, options)
     when 2,3
