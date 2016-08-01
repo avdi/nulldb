@@ -1,3 +1,9 @@
+0.3.3 (2016-08-01)
+-----------
+- Adds support for ActiveRecord 4.2.
+- Deprecates support for MRI 2.0.0.
+
+
 0.3.2 (2016-01-25)
 -----------
 - Deprecates support for MRI 1.9.3 and adds support for 2.3.x.
