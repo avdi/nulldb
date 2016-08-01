@@ -131,12 +131,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
     if table = @tables[table_name]
       table.columns.map do |col_def|
-        ActiveRecord::ConnectionAdapters::NullDBAdapter::Column.new(
-          col_def.name.to_s,
-          col_def.default,
-          col_def.type,
-          col_def.null
-        )
+        ActiveRecord::ConnectionAdapters::NullDBAdapter::Column.new(*new_column_arguments(col_def))
       end
     else
       []
@@ -181,7 +176,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def delete(statement, name=nil, binds = [])
     with_entry_point(:delete) do
-      super(statement, name)
+      super(statement, name).size
     end
   end
 
@@ -267,4 +262,28 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
       raise "Unsupported ActiveRecord version #{::ActiveRecord::VERSION::STRING}"
     end
   end
+
+  def new_column_arguments(col_def)
+    args_with_optional_cast_type(col_def)
+  end
+
+  def args_with_optional_cast_type(col_def)
+    default_column_arguments(col_def).tap do |args|
+      args.insert(2, lookup_cast_type(col_def.type)) if initialize_column_with_cast_type?
+    end
+  end
+
+  def default_column_arguments(col_def)
+    [
+      col_def.name.to_s,
+      col_def.default,
+      col_def.type,
+      col_def.null
+    ]
+  end
+
+  def initialize_column_with_cast_type?
+    ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR >= 2
+  end
+
 end
