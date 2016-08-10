@@ -112,6 +112,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     # NOOP
   end
 
+  def enable_extension(*)
+    # NOOP
+  end
+
   # Retrieve the table names defined by the schema
   def tables
     @tables.keys.map(&:to_s)

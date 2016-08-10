@@ -307,3 +307,19 @@ describe NullDB::RSpec::NullifiedDatabase do
     end
   end
 end
+
+
+describe 'adapter-specific extensions' do
+  before(:all) do
+    ActiveRecord::Base.establish_connection :adapter => :nulldb
+    ActiveRecord::Migration.verbose = false
+  end
+
+  it "supports 'enable_extension' in the schema definition" do
+    expect{
+      ActiveRecord::Schema.define do
+        enable_extension "plpgsql"
+      end
+    }.to_not raise_error
+  end
+end
