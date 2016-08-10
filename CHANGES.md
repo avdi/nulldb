@@ -1,3 +1,8 @@
+0.3.4 (2016-08-10)
+-----------
+- Adds support for Postgres-specific 'enable_extension'
+
+
 0.3.3 (2016-08-01)
 -----------
 - Adds support for ActiveRecord 4.2.
