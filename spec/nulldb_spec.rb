@@ -323,3 +323,11 @@ describe 'adapter-specific extensions' do
     }.to_not raise_error
   end
 end
+
+describe ActiveRecord::ConnectionAdapters::NullDBAdapter::EmptyResult do
+  it "should return an empty array from #cast_values" do
+    result = described_class.new
+    expect( result.cast_values ).to be_a Array
+    expect( result.cast_values ).to be_empty
+  end
+end
