@@ -1,3 +1,8 @@
+0.3.5 (2016-09-26)
+-----------
+- Adds support for #cast_values on EmptyResult instance.
+
+
 0.3.4 (2016-08-10)
 -----------
 - Adds support for Postgres-specific 'enable_extension'
