@@ -13,6 +13,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
     def columns
       @columns ||= []
     end
+
+    def cast_values(type_overrides = nil)
+      rows
+    end
   end
 
 end
