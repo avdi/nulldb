@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.files    = `git ls-files`.split($/)
   s.homepage = "http://github.com/nulldb/nulldb"
   s.licenses = ["MIT"]
-  s.rubyforge_project = "nulldb"
   s.rubygems_version = "2.4.8"
   s.summary = "The Null Object pattern as applied to ActiveRecord database adapters"
 
