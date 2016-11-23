@@ -1,3 +1,8 @@
+0.3.6 (2016-11-23)
+-----------
+- Adds support for ActiveRecord 5.0.
+
+
 0.3.5 (2016-09-26)
 -----------
 - Adds support for #cast_values on EmptyResult instance.
