@@ -77,7 +77,7 @@ describe "NullDB" do
         t.decimal :salary
       end
 
-      create_table(:employees_widgets, :id => false) do |t|
+      create_table(:employees_widgets, :id => false, :force => true) do |t|
         t.integer :employee_id
         t.integer :widget_id
       end

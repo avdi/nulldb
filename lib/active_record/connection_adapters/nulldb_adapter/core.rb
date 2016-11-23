@@ -23,8 +23,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     @indexes        = Hash.new { |hash, key| hash[key] = [] }
     @schema_path    = config.fetch(:schema){ "db/schema.rb" }
     @config         = config.merge(:adapter => :nulldb)
-    super(nil, @logger)
-    @visitor = Arel::Visitors::ToSql.new self if defined?(Arel::Visitors::ToSql)
+    super *initialize_args
+    @visitor ||= Arel::Visitors::ToSql.new self if defined?(Arel::Visitors::ToSql)
   end
 
   # A log of every statement that has been "executed" by this connection adapter
@@ -121,6 +121,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     @tables.keys.map(&:to_s)
   end
 
+  def views
+    [] # TODO: Implement properly if needed - This is new method in rails
+  end
+
   # Retrieve table columns as defined by the schema
   def columns(table_name, name = nil)
     if @tables.size <= 1
@@ -152,7 +156,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     NullObject.new
   end
 
-  def exec_query(statement, name = 'SQL', binds = [])
+  def exec_query(statement, name = 'SQL', binds = [], options = {})
     self.execution_log << Statement.new(entry_point, statement)
     EmptyResult.new
   end
@@ -184,7 +188,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     end
   end
 
-  def select_all(statement, name=nil, binds = [])
+  def select_all(statement, name=nil, binds = [], options = {})
     with_entry_point(:select_all) do
       super(statement, name)
     end
@@ -258,6 +262,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def new_table_definition(adapter = nil, table_name = nil, is_temporary = nil, options = {})
     case ::ActiveRecord::VERSION::MAJOR
+    when 5
+      TableDefinition.new(table_name, is_temporary, options.except(:id), nil)
     when 4
       TableDefinition.new(native_database_types, table_name, is_temporary, options)
     when 2,3
@@ -273,7 +279,11 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def args_with_optional_cast_type(col_def)
     default_column_arguments(col_def).tap do |args|
-      args.insert(2, lookup_cast_type(col_def.type)) if initialize_column_with_cast_type?
+      if respond_to? :fetch_type_metadata
+        args.insert(2, fetch_type_metadata(col_def.type))
+      elsif initialize_column_with_cast_type?
+        args.insert(2, lookup_cast_type(col_def.type))
+      end
     end
   end
 
@@ -288,6 +298,11 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def initialize_column_with_cast_type?
     ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR >= 2
+  end
+
+  def initialize_args
+    return [nil, @logger, @config] if ActiveRecord::VERSION::MAJOR > 3
+    [nil, @logger]
   end
 
 end
