@@ -18,44 +18,7 @@ Gem::Specification.new do |s|
     "LICENSE",
     "README.rdoc"
   ]
-  s.files = [
-    ".travis.yml",
-    "Appraisals",
-    "CHANGES.md",
-    "Gemfile",
-    "LICENSE",
-    "README.rdoc",
-    "Rakefile",
-    "VERSION",
-    "activerecord-nulldb-adapter.gemspec",
-    "gemfiles/activerecord_2.3.gemfile",
-    "gemfiles/activerecord_3.0.gemfile",
-    "gemfiles/activerecord_3.1.gemfile",
-    "gemfiles/activerecord_3.2.gemfile",
-    "gemfiles/activerecord_4.0.gemfile",
-    "gemfiles/activerecord_4.1.gemfile",
-    "gemfiles/activerecord_4.2.gemfile",
-    "lib/active_record/connection_adapters/nulldb_adapter.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/checkpoint.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/column.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/configuration.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/core.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/empty_result.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/index_definition.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/null_object.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/statement.rb",
-    "lib/active_record/connection_adapters/nulldb_adapter/table_definition.rb",
-    "lib/activerecord-nulldb-adapter.rb",
-    "lib/nulldb.rb",
-    "lib/nulldb/arel_compiler.rb",
-    "lib/nulldb/core.rb",
-    "lib/nulldb/extensions.rb",
-    "lib/nulldb/rails.rb",
-    "lib/nulldb_rspec.rb",
-    "lib/tasks/database.rake",
-    "spec/nulldb_spec.rb",
-    "spec/spec.opts"
-  ]
+  s.files    = `git ls-files`.split($/)
   s.homepage = "http://github.com/nulldb/nulldb"
   s.licenses = ["MIT"]
   s.rubyforge_project = "nulldb"
