@@ -11,7 +11,7 @@ doc
 .bundle
 *.lock
 
-# jeweler
+# gem
 pkg
 
 # mac os specific

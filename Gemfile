@@ -9,7 +9,6 @@ group :development, :test do
 end
 
 group :development do
-  gem 'jeweler'
   gem 'appraisal'
   gem 'simplecov', :require => false
 end
