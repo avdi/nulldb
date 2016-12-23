@@ -295,12 +295,20 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def default_column_arguments(col_def)
-    [
-      col_def.name.to_s,
-      col_def.default,
-      col_def.type,
-      col_def.null
-    ]
+    if ActiveRecord::VERSION::MAJOR == 5
+      [
+        col_def.name.to_s,
+        col_def.default,
+        col_def.null.nil? || col_def.null # cast  [false, nil, true] => [false, true, true], other adapters default to null=true 
+      ]
+    else
+      [
+        col_def.name.to_s,
+        col_def.default,
+        col_def.type,
+        col_def.null.nil? || col_def.null # cast  [false, nil, true] => [false, true, true], other adapters default to null=true 
+      ]
+    end
   end
 
   def initialize_column_with_cast_type?

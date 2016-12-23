@@ -71,7 +71,7 @@ describe "NullDB" do
     ActiveRecord::Migration.verbose = false
     ActiveRecord::Schema.define do
       create_table(:employees) do |t|
-        t.string  :name, limit: 50
+        t.string  :name, null: false, limit: 50
         t.date    :hire_date
         t.integer :employee_number
         t.decimal :salary
@@ -115,6 +115,14 @@ describe "NullDB" do
 
   it 'should have limit on name' do
     expect(Employee.columns_hash['name'].limit).to eq 50
+  end
+
+  it "should return true on nullable field" do
+    expect(Employee.columns_hash['salary'].null).to be true
+  end
+
+  it "should return false on non-nullable field" do
+    expect(Employee.columns_hash['name'].null).to be false
   end
 
   it "should return the appropriate primary key" do
