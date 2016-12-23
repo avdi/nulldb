@@ -280,11 +280,18 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   def args_with_optional_cast_type(col_def)
     default_column_arguments(col_def).tap do |args|
       if respond_to? :fetch_type_metadata
-        args.insert(2, fetch_type_metadata(col_def.type))
+        args.insert(2, meta_with_limit!(fetch_type_metadata(col_def.type), col_def))
       elsif initialize_column_with_cast_type?
-        args.insert(2, lookup_cast_type(col_def.type))
+        args.insert(2, meta_with_limit!(lookup_cast_type(col_def.type), col_def))
+      else
+        args[2] = args[2].to_s + "(#{col_def.limit})" if col_def.limit
       end
     end
+  end
+
+  def meta_with_limit!(meta, col_def)
+    meta.instance_variable_set('@limit', col_def.limit)
+    meta
   end
 
   def default_column_arguments(col_def)

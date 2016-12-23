@@ -71,7 +71,7 @@ describe "NullDB" do
     ActiveRecord::Migration.verbose = false
     ActiveRecord::Schema.define do
       create_table(:employees) do |t|
-        t.string  :name
+        t.string  :name, limit: 50
         t.date    :hire_date
         t.integer :employee_number
         t.decimal :salary
@@ -111,6 +111,10 @@ describe "NullDB" do
     should_have_column(Employee, :hire_date, :date)
     should_have_column(Employee, :employee_number, :integer)
     should_have_column(Employee, :salary, :decimal)
+  end
+
+  it 'should have limit on name' do
+    expect(Employee.columns_hash['name'].limit).to eq 50
   end
 
   it "should return the appropriate primary key" do
@@ -249,7 +253,7 @@ describe "NullDB" do
 
   def should_have_column(klass, col_name, col_type)
     col = klass.columns_hash[col_name.to_s]
-    expect(col.sql_type.to_sym).to eq col_type
+    expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
   end
 
 
