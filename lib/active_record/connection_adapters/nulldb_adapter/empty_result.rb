@@ -17,6 +17,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
     def cast_values(type_overrides = nil)
       rows
     end
+
+    def >(num)
+      rows.size > num
+    end
   end
 
 end
