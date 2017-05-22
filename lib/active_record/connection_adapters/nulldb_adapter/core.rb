@@ -279,8 +279,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def args_with_optional_cast_type(col_def)
     default_column_arguments(col_def).tap do |args|
-      if respond_to? :fetch_type_metadata
-        args.insert(2, meta_with_limit!(fetch_type_metadata(col_def.type), col_def))
+      if defined?(ActiveRecord::ConnectionAdapters::SqlTypeMetadata)
+        meta = ActiveRecord::ConnectionAdapters::SqlTypeMetadata.new(sql_type: col_def.type)
+        args.insert(2, meta_with_limit!(meta, col_def))
       elsif initialize_column_with_cast_type?
         args.insert(2, meta_with_limit!(lookup_cast_type(col_def.type), col_def))
       else
