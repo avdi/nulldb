@@ -18,6 +18,10 @@ matrix:
     - rvm: rbx
   exclude:
     - rvm: 1.9.3
+      gemfile: gemfiles/activerecord_master.gemfile
+    - rvm: 2.1.10
+      gemfile: gemfiles/activerecord_master.gemfile
+    - rvm: 1.9.3
       gemfile: gemfiles/activerecord_5.1.gemfile
     - rvm: 2.1.10
       gemfile: gemfiles/activerecord_5.1.gemfile
@@ -42,3 +46,4 @@ gemfile:
   - gemfiles/activerecord_4.2.gemfile
   - gemfiles/activerecord_5.0.gemfile
   - gemfiles/activerecord_5.1.gemfile
+  - gemfiles/activerecord_master.gemfile
