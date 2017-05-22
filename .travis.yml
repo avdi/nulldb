@@ -18,6 +18,10 @@ matrix:
     - rvm: rbx
   exclude:
     - rvm: 1.9.3
+      gemfile: gemfiles/activerecord_5.1.gemfile
+    - rvm: 2.1.10
+      gemfile: gemfiles/activerecord_5.1.gemfile
+    - rvm: 1.9.3
       gemfile: gemfiles/activerecord_5.0.gemfile
     - rvm: 2.1.10
       gemfile: gemfiles/activerecord_5.0.gemfile
