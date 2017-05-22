@@ -1,3 +1,9 @@
+0.3.7 (Unreleased)
+-----------
+- Adds support for ActiveRecord 5.1/5.2.
+- Support limit and null
+
+
 0.3.6 (2016-11-23)
 -----------
 - Adds support for ActiveRecord 5.0.
