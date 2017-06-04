@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "activerecord-nulldb-adapter"
-  s.version = "0.3.6"
+  s.version = "0.3.7"
 
   s.require_paths = ["lib"]
   s.authors = ["Avdi Grimm", "Myron Marston"]
