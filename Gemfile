@@ -6,6 +6,7 @@ group :development, :test do
   gem 'spec'
   gem 'rspec', '>= 1.2.9'
   gem 'rake'
+  gem 'rdoc'
 end
 
 group :development do
