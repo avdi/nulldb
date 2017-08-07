@@ -1,8 +1,11 @@
 # coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'nulldb/version'
 
 Gem::Specification.new do |s|
   s.name = "activerecord-nulldb-adapter"
-  s.version = "0.3.7"
+  s.version = NullDB::VERSION
 
   s.require_paths = ["lib"]
   s.authors = ["Avdi Grimm", "Myron Marston"]
