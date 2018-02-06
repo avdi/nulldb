@@ -33,7 +33,7 @@ end
 
 module ActiveRecord
   # Just make sure you have the latest version of your schema
-  superclass = ActiveRecord::VERSION::MAJOR == 5 ? Migration.public_send(:[], "#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}".to_f) : Migration
+  superclass = ActiveRecord::VERSION::MAJOR >= 5 ? Migration.public_send(:[], "#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}".to_f) : Migration
   class Schema < superclass
     def self.define(info={}, &block)
       instance_eval(&block)
