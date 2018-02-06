@@ -1,3 +1,7 @@
+0.3.8 (2018-02-06)
+-----------
+- Adds support for ActiveRecord Edge (6.0)
+
 0.3.7 (2017-06-04)
 -----------
 - Adds support for ActiveRecord 5.1/5.2.
