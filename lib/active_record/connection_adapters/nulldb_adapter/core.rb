@@ -139,7 +139,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
     if table = @tables[table_name]
       table.columns.map do |col_def|
-        ActiveRecord::ConnectionAdapters::NullDBAdapter::Column.new(*new_column_arguments(col_def))
+        col_args = new_column_arguments(col_def)
+        ActiveRecord::ConnectionAdapters::NullDBAdapter::Column.new(*col_args)
       end
     else
       []
@@ -262,7 +263,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def new_table_definition(adapter = nil, table_name = nil, is_temporary = nil, options = {})
     case ::ActiveRecord::VERSION::MAJOR
-    when 5
+    when 5, 6
       TableDefinition.new(table_name, is_temporary, options.except(:id), nil)
     when 4
       TableDefinition.new(native_database_types, table_name, is_temporary, options)
@@ -296,7 +297,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def default_column_arguments(col_def)
-    if ActiveRecord::VERSION::MAJOR == 5
+    if ActiveRecord::VERSION::MAJOR >= 5
       [
         col_def.name.to_s,
         col_def.default,
