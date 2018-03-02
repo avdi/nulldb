@@ -15,6 +15,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   # Recognized options:
   #
   # [+:schema+] path to the schema file, relative to Rails.root
+  # [+:table_definition_class_name+] table definition class
+  # (e.g. ActiveRecord::ConnectionAdapters::PostgreSQL::TableDefinition for Postgres) or nil.
   def initialize(config={})
     @log            = StringIO.new
     @logger         = Logger.new(@log)
@@ -25,6 +27,12 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     @config         = config.merge(:adapter => :nulldb)
     super *initialize_args
     @visitor ||= Arel::Visitors::ToSql.new self if defined?(Arel::Visitors::ToSql)
+
+    if config[:table_definition_class_name]
+      ActiveRecord::ConnectionAdapters::NullDBAdapter.send(:remove_const, 'TableDefinition')
+      ActiveRecord::ConnectionAdapters::NullDBAdapter.const_set('TableDefinition',
+        self.class.const_get(config[:table_definition_class_name]))
+    end
   end
 
   # A log of every statement that has been "executed" by this connection adapter
