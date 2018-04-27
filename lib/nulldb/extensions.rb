@@ -36,7 +36,7 @@ module ActiveRecord
   superclass = ActiveRecord::VERSION::MAJOR >= 5 ? Migration.public_send(:[], "#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}".to_f) : Migration
   class Schema < superclass
     def self.define(info={}, &block)
-      instance_eval(&block)
+      new.define(info, &block)
     end
   end
 end
