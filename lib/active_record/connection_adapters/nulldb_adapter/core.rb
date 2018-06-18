@@ -229,7 +229,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def select(statement, name = nil, binds = [])
     EmptyResult.new.tap do |r|
-      r.columns = columns_for(name)
+      r.bind_column_meta(columns_for(name))
       self.execution_log << Statement.new(entry_point, statement)
     end
   end
@@ -237,10 +237,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   private
 
   def columns_for(table_name)
-    table_def = @tables[table_name]
-    return {} unless table_def
-    names = table_def.columns.map(&:name)
-    Hash[names.zip(table_def.columns)]
+    table_meta = @tables[table_name]
+    return [] unless table_meta
+    table_meta.columns
   end
 
   def next_unique_id
