@@ -287,6 +287,10 @@ describe "NullDB" do
     expect( ActiveRecord::Base ).to receive(:connection_pool).and_raise(ActiveRecord::ConnectionNotEstablished)
     expect { NullDB.nullify }.to_not raise_error
   end
+
+  it 'should handle count queries' do 
+    expect(Employee.count).to eql(0)
+  end
 end
 
 # need a fallback db for contextual nullification
