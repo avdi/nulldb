@@ -7,10 +7,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
       @columns = columns
       return if columns.empty?
 
-      @column_types = begin
-        names = columns.map(&:name)
-        Hash[names.zip(table_def.columns)]
-      end
+      @column_types = columns.reduce({}) do |ctypes, col|
+        ctypes[col.name] = ActiveRecord::Type.lookup(col.type)
+        ctypes
+      end      
     end
 
     def columns

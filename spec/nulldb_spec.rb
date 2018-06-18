@@ -338,6 +338,11 @@ describe 'adapter-specific extensions' do
       end
     }.to_not raise_error
   end
+
+  it 'registers a primary_key type' do
+    expect(ActiveRecord::Type.lookup(:primary_key, adapter: 'NullDB'))
+      .to be_a(ActiveModel::Type::Integer)
+  end
 end
 
 describe ActiveRecord::ConnectionAdapters::NullDBAdapter::EmptyResult do

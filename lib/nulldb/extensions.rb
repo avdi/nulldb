@@ -30,4 +30,4 @@ class ActiveRecord::Base
   end
 end
 
-
+ActiveRecord::Type.register(:primary_key, ActiveModel::Type::Integer, adapter: 'NullDB')
