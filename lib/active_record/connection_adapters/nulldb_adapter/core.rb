@@ -238,7 +238,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def columns_for(table_name)
     table_def = @tables[table_name]
-    table_def ? table_def.columns : []
+    return {} unless table_def
+    names = table_def.columns.map(&:name)
+    Hash[names.zip(table_def.columns)]
   end
 
   def next_unique_id

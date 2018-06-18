@@ -2,12 +2,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
 
   class EmptyResult < Array
     attr_writer :columns
+    
     def rows
       []
-    end
-
-    def column_types
-      columns.map{|col| col.type}
     end
 
     def columns
@@ -21,6 +18,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
     def >(num)
       rows.size > num
     end
+
+    alias_method :column_types, :columns
   end
 
 end
