@@ -29,5 +29,3 @@ class ActiveRecord::Base
     ActiveRecord::ConnectionAdapters::NullDBAdapter.new(config)
   end
 end
-
-ActiveRecord::Type.register(:primary_key, ActiveModel::Type::Integer, adapter: 'NullDB')

@@ -33,6 +33,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
       ActiveRecord::ConnectionAdapters::NullDBAdapter.const_set('TableDefinition',
         self.class.const_get(config[:table_definition_class_name]))
     end
+
+    register_types unless NullDB::LEGACY_ACTIVERECORD
   end
 
   # A log of every statement that has been "executed" by this connection adapter
@@ -331,4 +333,18 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     [nil, @logger]
   end
 
+  # 4.2 introduced ActiveRecord::Type
+  # https://github.com/rails/rails/tree/4-2-stable/activerecord/lib/active_record
+  def register_types
+    if ActiveRecord::VERSION::MAJOR < 5
+      type_map.register_type(:primary_key, ActiveRecord::Type::Integer.new)
+    else
+      require 'active_model/type'
+      ActiveModel::Type.register(
+        :primary_key,
+        ActiveModel::Type::Integer,
+        adapter: 'NullDB'
+      )
+    end
+  end
 end

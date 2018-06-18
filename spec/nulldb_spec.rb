@@ -339,9 +339,11 @@ describe 'adapter-specific extensions' do
     }.to_not raise_error
   end
 
-  it 'registers a primary_key type' do
-    expect(ActiveRecord::Type.lookup(:primary_key, adapter: 'NullDB'))
-      .to be_a(ActiveModel::Type::Integer)
+  if !NullDB::LEGACY_ACTIVERECORD
+    it 'registers a primary_key type' do
+      expect(ActiveRecord::Type.lookup(:primary_key, adapter: 'NullDB'))
+        .to be_a(ActiveModel::Type::Integer)
+    end
   end
 end
 

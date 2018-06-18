@@ -3,6 +3,9 @@ require 'active_support/deprecation'
 require 'active_record/connection_adapters/nulldb_adapter'
 
 module NullDB
+  LEGACY_ACTIVERECORD = 
+    (ActiveRecord::VERSION::MAJOR < 5) && (ActiveRecord::VERSION::MINOR < 2)
+
   class Configuration < Struct.new(:project_root); end
 
   class << self
