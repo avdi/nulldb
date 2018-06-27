@@ -4,7 +4,7 @@ require 'active_record/connection_adapters/nulldb_adapter'
 
 module NullDB
   LEGACY_ACTIVERECORD = 
-    (ActiveRecord::VERSION::MAJOR < 5) && (ActiveRecord::VERSION::MINOR < 2)
+    Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('4.2.0')
 
   class Configuration < Struct.new(:project_root); end
 
