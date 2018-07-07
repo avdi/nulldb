@@ -1,3 +1,10 @@
+0.3.9 (2018-07-07)
+-----------
+- Fix broken count
+- Avoid monkey patching Schema.define
+- Support ruby 2.4 (drop support for ruby 2.1 and rails 3.0/3.1)
+- Support custom TableDefinition (useful for postgres)
+
 0.3.8 (2018-02-06)
 -----------
 - Adds support for ActiveRecord Edge (6.0)
