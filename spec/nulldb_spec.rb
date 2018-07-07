@@ -287,6 +287,10 @@ describe "NullDB" do
     expect( ActiveRecord::Base ).to receive(:connection_pool).and_raise(ActiveRecord::ConnectionNotEstablished)
     expect { NullDB.nullify }.to_not raise_error
   end
+
+  it 'should handle count queries' do 
+    expect(Employee.count).to eql(0)
+  end
 end
 
 # need a fallback db for contextual nullification
@@ -333,6 +337,13 @@ describe 'adapter-specific extensions' do
         enable_extension "plpgsql"
       end
     }.to_not raise_error
+  end
+
+  if ActiveRecord::VERSION::MAJOR > 4
+    it 'registers a primary_key type' do
+      expect(ActiveRecord::Type.lookup(:primary_key, adapter: 'NullDB'))
+        .to be_a(ActiveModel::Type::Integer)
+    end
   end
 end
 

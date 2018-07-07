@@ -33,6 +33,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
       ActiveRecord::ConnectionAdapters::NullDBAdapter.const_set('TableDefinition',
         self.class.const_get(config[:table_definition_class_name]))
     end
+
+    register_types unless NullDB::LEGACY_ACTIVERECORD || \
+                          ActiveRecord::VERSION::MAJOR < 4
   end
 
   # A log of every statement that has been "executed" by this connection adapter
@@ -229,7 +232,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def select(statement, name = nil, binds = [])
     EmptyResult.new.tap do |r|
-      r.columns = columns_for(name)
+      r.bind_column_meta(columns_for(name))
       self.execution_log << Statement.new(entry_point, statement)
     end
   end
@@ -237,8 +240,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   private
 
   def columns_for(table_name)
-    table_def = @tables[table_name]
-    table_def ? table_def.columns : []
+    table_meta = @tables[table_name]
+    return [] unless table_meta
+    table_meta.columns
   end
 
   def next_unique_id
@@ -330,4 +334,19 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     [nil, @logger]
   end
 
+  # 4.2 introduced ActiveRecord::Type
+  # https://github.com/rails/rails/tree/4-2-stable/activerecord/lib/active_record
+  def register_types
+    if ActiveRecord::VERSION::MAJOR < 5
+      type_map.register_type(:primary_key, ActiveRecord::Type::Integer.new)
+    else      
+      require 'active_model/type'
+      ActiveRecord::Type.register(
+        :primary_key,
+        ActiveModel::Type::Integer,
+        adapter: adapter_name,
+        override: true
+      )
+    end
+  end
 end
