@@ -16,6 +16,7 @@ matrix:
   allow_failures:
     - rvm: jruby
     - rvm: rbx
+    - gemfile: gemfiles/activerecord_master.gemfile
   exclude:
     - rvm: 1.9.3
       gemfile: gemfiles/activerecord_master.gemfile
