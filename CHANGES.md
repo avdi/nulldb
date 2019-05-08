@@ -1,3 +1,7 @@
+Unreleased
+----------
+- Adds support for ActiveRecord 6.0.0.rc1
+
 0.3.9 (2018-07-07)
 -----------
 - Fix broken count
