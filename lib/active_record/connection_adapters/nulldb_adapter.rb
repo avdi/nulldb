@@ -19,3 +19,4 @@ require 'active_record/connection_adapters/nulldb_adapter/index_definition'
 require 'active_record/connection_adapters/nulldb_adapter/null_object'
 require 'active_record/connection_adapters/nulldb_adapter/table_definition'
 
+require 'active_record/tasks/nulldb_database_tasks' if defined?(ActiveRecord::Tasks)
