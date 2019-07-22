@@ -16,9 +16,9 @@ a real database.
 == Compatibility
 
 === Ruby
-Currently supported Ruby versions: MRI 1.9.3, 2.0.0, 2.1.x, 2.2.x, 2.3.x
+Currently supported Ruby versions: MRI 2.2.x, 2.3.x, 2.4.x, 2.5.x, 2.6.x
 
-Experimental support provided for: JRuby, Rubinius (both in 1.9 mode)
+Experimental support provided for: JRuby, Rubinius
 
 === ActiveRecord
 Any version of ActiveRecord since 2.0, including ActiveRecord 5.0

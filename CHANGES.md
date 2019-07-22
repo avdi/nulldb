@@ -4,6 +4,7 @@ Unreleased
 0.4.0 (2019-07-22)
 -----------
 
+- *Breaking* Drop support to Ruby 1.9
 - Add support for ActiveRecord 6.0 #90
 - Prevent ActiveRecord::Tasks::DatabaseNotSupported #88
 
