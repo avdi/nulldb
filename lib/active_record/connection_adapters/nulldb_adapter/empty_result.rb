@@ -33,6 +33,9 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
       rows.size > num
     end
 
+    def includes_column?(name)
+      false
+    end
   end
 
 end
