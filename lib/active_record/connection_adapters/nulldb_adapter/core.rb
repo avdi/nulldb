@@ -90,6 +90,11 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     @indexes[table_name] << IndexDefinition.new(table_name, index_name, (index_type == 'UNIQUE'), column_names, [], [])
   end
 
+  def remove_index(table_name, options = {})
+    index_name = index_name_for_remove(table_name, options)
+    index = @indexes[table_name].reject! { |index| index.name == index_name }
+  end
+
   unless instance_methods.include? :add_index_options
     def add_index_options(table_name, column_name, options = {})
       column_names = Array.wrap(column_name)
