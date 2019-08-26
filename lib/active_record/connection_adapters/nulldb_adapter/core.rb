@@ -235,6 +235,13 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     columns(table_name).detect { |col| col.sql_type == :primary_key }.try(:name)
   end
 
+  def change_column(table_name, column_name, type, options = {})
+    table_meta = @tables[table_name]
+    column = table_meta.columns.find { |column| column.name == column_name.to_s }
+    column.type = type
+    column.options = options if options
+  end
+
   protected
 
   def select(statement, name = nil, binds = [])
