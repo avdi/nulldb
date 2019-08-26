@@ -290,7 +290,7 @@ describe "NullDB" do
     expect { NullDB.nullify }.to_not raise_error
   end
 
-  it 'should handle count queries' do 
+  it 'should handle count queries' do
     expect(Employee.count).to eql(0)
   end
 end
@@ -356,7 +356,7 @@ describe 'table changes' do
 
       class Worker < ActiveRecord::Base
         after_save :on_save_finished
-      
+
         def on_save_finished
         end
       end
@@ -365,9 +365,27 @@ describe 'table changes' do
       should_have_column(Worker, :hire_date, :date)
       should_have_column(Worker, :employee_number, :integer)
       should_have_column(Worker, :salary, :decimal)
-    
+
       worker = Worker.create(:name => "Bob Jones")
       expect(worker.name).to eq "Bob Jones"
+    end
+  end
+
+  describe 'add_column' do
+    it 'should add a column to an existing table' do
+      expect{
+        ActiveRecord::Schema.define do
+          add_column :employees, :title, :string
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+
+      should_have_column(Employee, :name, :string)
+      should_have_column(Employee, :hire_date, :date)
+      should_have_column(Employee, :employee_number, :integer)
+      should_have_column(Employee, :salary, :decimal)
+      should_have_column(Employee, :title, :string)
     end
   end
 
@@ -380,14 +398,14 @@ describe 'table changes' do
         Employee.connection.schema_cache.clear!
         Employee.reset_column_information
       }.to_not raise_error
-    
+
       should_have_column(Employee, :name, :text)
       should_have_column(Employee, :hire_date, :date)
       should_have_column(Employee, :employee_number, :integer)
-      should_have_column(Employee, :salary, :decimal)  
+      should_have_column(Employee, :salary, :decimal)
     end
   end
-  
+
   describe 'rename_column' do
     it 'should rename a column' do
       expect{
@@ -397,11 +415,11 @@ describe 'table changes' do
         Employee.connection.schema_cache.clear!
         Employee.reset_column_information
       }.to_not raise_error
-    
+
       should_have_column(Employee, :full_name, :string)
       should_have_column(Employee, :hire_date, :date)
       should_have_column(Employee, :employee_number, :integer)
-      should_have_column(Employee, :salary, :decimal)  
+      should_have_column(Employee, :salary, :decimal)
     end
   end
 
