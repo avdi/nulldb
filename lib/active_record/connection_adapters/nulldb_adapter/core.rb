@@ -74,14 +74,18 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
     yield table_definition if block_given?
 
-    @tables[table_name] = table_definition
+    @tables[table_name.to_s] = table_definition
   end
 
   def rename_table(table_name, new_name)
     table_definition = @tables.delete(table_name)
 
-    table_definition.name = new_name
-    @tables[new_name] = table_definition
+    if table_definition
+      table_definition.name = new_name
+      @tables[new_name] = table_definition
+    else
+      create_table(new_name)
+    end
   end
 
   def add_index(table_name, column_names, options = {})
@@ -244,7 +248,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     table_meta = @tables[table_name]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
     return unless column
-    
+
     column.type = type
     column.options = options if options
   end
