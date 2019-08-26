@@ -78,14 +78,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def rename_table(table_name, new_name)
-    table_definition = @tables.delete(table_name)
+    table_definition = @tables.delete(table_name.to_s)
 
-    if table_definition
-      table_definition.name = new_name
-      @tables[new_name] = table_definition
-    else
-      create_table(new_name)
-    end
+    table_definition.name = new_name.to_s
+    @tables[new_name.to_s] = table_definition
   end
 
   def add_index(table_name, column_names, options = {})
@@ -245,13 +241,13 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def add_column(table_name, column_name, type, options = {})
-    table_meta = @tables[table_name]
+    table_meta = @tables[table_name.to_s]
 
     table_meta.column column_name, type, options
   end
 
   def change_column(table_name, column_name, type, options = {})
-    table_meta = @tables[table_name]
+    table_meta = @tables[table_name.to_s]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
     return unless column
 
@@ -260,7 +256,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def rename_column(table_name, column_name, new_column_name)
-    table_meta = @tables[table_name]
+    table_meta = @tables[table_name.to_s]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
     return unless column
 
@@ -268,7 +264,7 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def change_column_default(table_name, column_name, default_or_changes)
-    table_meta = @tables[table_name]
+    table_meta = @tables[table_name.to_s]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
 
     return unless column
