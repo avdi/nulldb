@@ -241,7 +241,10 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   end
 
   def add_column(table_name, column_name, type, options = {})
+    super
+
     table_meta = @tables[table_name.to_s]
+    return unless table_meta
 
     table_meta.column column_name, type, options
   end
