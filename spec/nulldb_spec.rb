@@ -84,6 +84,8 @@ describe "NullDB" do
 
       add_index "employees", :name, :name => "index_employees_on_name"
       add_index "employees", ["employee_number"], :name => "index_employees_on_employee_number", :unique => true
+      add_index "employees", :hire_date
+      remove_index "employees", :hire_date
       add_index "employees_widgets", ["employee_id", "widget_id"], :name => "my_index"
 
       add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
@@ -265,7 +267,7 @@ describe "NullDB" do
   end
 
 
-  it "should support adding indexes" do
+  it "should support adding and removing indexes" do
     expect( Employee.connection.indexes('employees').size ).to eq 2
     expect( Employee.connection.indexes('employees_widgets').size ).to eq 1
   end

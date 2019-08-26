@@ -253,6 +253,17 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     column.name = new_column_name
   end
 
+  def change_column_default(table_name, column_name, default_or_changes)
+    table_meta = @tables[table_name]
+    column = table_meta.columns.find { |column| column.name == column_name.to_s }
+
+    if default_or_changes.kind_of? Hash
+      column.default = default_or_changes[:to]
+    else
+      column.default = default_or_changes
+    end
+  end
+
   protected
 
   def select(statement, name = nil, binds = [])
