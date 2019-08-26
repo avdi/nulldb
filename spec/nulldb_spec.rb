@@ -326,8 +326,8 @@ describe NullDB::RSpec::NullifiedDatabase do
   end
 end
 
-describe 'rename_table' do
-  before(:all) do
+describe 'table changes' do
+  before(:each) do
     ActiveRecord::Base.establish_connection :adapter => :nulldb
     ActiveRecord::Migration.verbose = false
 
@@ -346,65 +346,91 @@ describe 'rename_table' do
     expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
   end
 
-  it 'should rename a table' do
-    expect{
-      ActiveRecord::Schema.define do
-        rename_table :employees, :workers
-      end
-    }.to_not raise_error
+  describe 'rename_table' do
+    it 'should rename a table' do
+      expect{
+        ActiveRecord::Schema.define do
+          rename_table :employees, :workers
+        end
+      }.to_not raise_error
 
-    class Worker < ActiveRecord::Base
-      after_save :on_save_finished
+      class Worker < ActiveRecord::Base
+        after_save :on_save_finished
+      
+        def on_save_finished
+        end
+      end
+
+      should_have_column(Worker, :name, :string)
+      should_have_column(Worker, :hire_date, :date)
+      should_have_column(Worker, :employee_number, :integer)
+      should_have_column(Worker, :salary, :decimal)
     
-      def on_save_finished
-      end
+      worker = Worker.create(:name => "Bob Jones")
+      expect(worker.name).to eq "Bob Jones"
     end
+  end
 
-    should_have_column(Worker, :name, :string)
-    should_have_column(Worker, :hire_date, :date)
-    should_have_column(Worker, :employee_number, :integer)
-    should_have_column(Worker, :salary, :decimal)
+  describe 'change_column' do
+    it 'should change the column type' do
+      expect{
+        ActiveRecord::Schema.define do
+          change_column :employees, :name, :text
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+    
+      should_have_column(Employee, :name, :text)
+      should_have_column(Employee, :hire_date, :date)
+      should_have_column(Employee, :employee_number, :integer)
+      should_have_column(Employee, :salary, :decimal)  
+    end
+  end
   
-    worker = Worker.create(:name => "Bob Jones")
-    expect(worker.name).to eq "Bob Jones"
-  end
-end
-
-describe 'change_column' do
-  before(:all) do
-    ActiveRecord::Base.establish_connection :adapter => :nulldb
-    ActiveRecord::Migration.verbose = false
-
-    ActiveRecord::Schema.define do
-      create_table(:employees) do |t|
-        t.string  :name, null: false, limit: 50
-        t.date    :hire_date
-        t.integer :employee_number
-        t.decimal :salary
-      end
+  describe 'rename_column' do
+    it 'should rename a column' do
+      expect{
+        ActiveRecord::Schema.define do
+          rename_column :employees, :name, :full_name
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+    
+      should_have_column(Employee, :full_name, :string)
+      should_have_column(Employee, :hire_date, :date)
+      should_have_column(Employee, :employee_number, :integer)
+      should_have_column(Employee, :salary, :decimal)  
     end
   end
 
-  def should_have_column(klass, col_name, col_type)
-    col = klass.columns_hash[col_name.to_s]
-    expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
-  end
+  describe 'change_column_default' do
+    it 'should change default value of a column' do
+      expect{
+        ActiveRecord::Schema.define do
+          change_column_default :employees, :name, 'Jon Doe'
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
 
-  it 'should change the column type' do
-    expect{
-      ActiveRecord::Schema.define do
-        change_column :employees, :name, :text
-      end
-      Employee.connection.schema_cache.clear!
-      Employee.reset_column_information
-    }.to_not raise_error
+      columns = Employee.columns
+      expect(columns.second.default).to eq('Jon Doe')
+    end
 
-    columns = Employee.columns
+    it 'should change default value of a with has syntax' do
+      expect{
+        ActiveRecord::Schema.define do
+          change_column_default :employees, :name, from: nil, to: 'Jon Doe'
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
 
-    should_have_column(Employee, :name, :text)
-    should_have_column(Employee, :hire_date, :date)
-    should_have_column(Employee, :employee_number, :integer)
-    should_have_column(Employee, :salary, :decimal)  
+      columns = Employee.columns
+      expect(columns.second.default).to eq('Jon Doe')
+    end
   end
 end
 

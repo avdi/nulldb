@@ -243,6 +243,8 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   def change_column(table_name, column_name, type, options = {})
     table_meta = @tables[table_name]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
+    return unless column
+    
     column.type = type
     column.options = options if options
   end
@@ -250,12 +252,16 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
   def rename_column(table_name, column_name, new_column_name)
     table_meta = @tables[table_name]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
+    return unless column
+
     column.name = new_column_name
   end
 
   def change_column_default(table_name, column_name, default_or_changes)
     table_meta = @tables[table_name]
     column = table_meta.columns.find { |column| column.name == column_name.to_s }
+
+    return unless column
 
     if default_or_changes.kind_of? Hash
       column.default = default_or_changes[:to]
