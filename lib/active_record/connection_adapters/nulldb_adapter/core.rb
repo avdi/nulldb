@@ -242,6 +242,12 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     column.options = options if options
   end
 
+  def rename_column(table_name, column_name, new_column_name)
+    table_meta = @tables[table_name]
+    column = table_meta.columns.find { |column| column.name == column_name.to_s }
+    column.name = new_column_name
+  end
+
   protected
 
   def select(statement, name = nil, binds = [])
