@@ -77,6 +77,13 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
     @tables[table_name] = table_definition
   end
 
+  def rename_table(table_name, new_name)
+    table_definition = @tables.delete(table_name)
+
+    table_definition.name = new_name
+    @tables[new_name] = table_definition
+  end
+
   def add_index(table_name, column_names, options = {})
     column_names = Array.wrap(column_names).map(&:to_s)
     index_name, index_type, ignore = add_index_options(table_name, column_names, options)

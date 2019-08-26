@@ -324,11 +324,59 @@ describe NullDB::RSpec::NullifiedDatabase do
   end
 end
 
+describe 'rename_table' do
+  before(:all) do
+    ActiveRecord::Base.establish_connection :adapter => :nulldb
+    ActiveRecord::Migration.verbose = false
+
+    ActiveRecord::Schema.define do
+      create_table(:employees) do |t|
+        t.string  :name, null: false, limit: 50
+        t.date    :hire_date
+        t.integer :employee_number
+        t.decimal :salary
+      end
+    end
+  end
+
+  def should_have_column(klass, col_name, col_type)
+    col = klass.columns_hash[col_name.to_s]
+    expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
+  end
+
+  it 'should rename a table' do
+    expect{
+      ActiveRecord::Schema.define do
+        rename_table :employees, :workers
+      end
+    }.to_not raise_error
+
+    class Worker < ActiveRecord::Base
+      after_save :on_save_finished
+    
+      def on_save_finished
+      end
+    end
+
+    should_have_column(Worker, :name, :string)
+    should_have_column(Worker, :hire_date, :date)
+    should_have_column(Worker, :employee_number, :integer)
+    should_have_column(Worker, :salary, :decimal)
+  
+    worker = Worker.create(:name => "Bob Jones")
+    expect(worker.name).to eq "Bob Jones"
+  end
+end
 
 describe 'adapter-specific extensions' do
   before(:all) do
     ActiveRecord::Base.establish_connection :adapter => :nulldb
     ActiveRecord::Migration.verbose = false
+  end
+
+  def should_have_column(klass, col_name, col_type)
+    col = klass.columns_hash[col_name.to_s]
+    expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
   end
 
   it "supports 'enable_extension' in the schema definition" do
@@ -337,6 +385,25 @@ describe 'adapter-specific extensions' do
         enable_extension "plpgsql"
       end
     }.to_not raise_error
+  end
+
+  it 'supports postgres extension columns' do
+    expect {
+      ActiveRecord::Schema.define do
+        create_table :extended_models do |t|
+          t.citext :text
+          t.interval :time_interval
+          t.geometry :feature_geometry, srid: 4326, type: "multi_polygon"
+        end
+      end
+    }.to_not raise_error
+
+    class ExtendedModel < ActiveRecord::Base
+    end
+
+    should_have_column(ExtendedModel, :text, :text)
+    should_have_column(ExtendedModel, :time_interval, :text)
+    should_have_column(ExtendedModel, :feature_geometry, :text)
   end
 
   if ActiveRecord::VERSION::MAJOR > 4
