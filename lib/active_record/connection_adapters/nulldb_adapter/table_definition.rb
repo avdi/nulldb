@@ -5,5 +5,6 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter
     alias_method :citext, :text
     alias_method :interval, :text
     alias_method :geometry, :text
+    alias_method :jsonb, :json
   end
 end
