@@ -478,6 +478,7 @@ describe 'adapter-specific extensions' do
           t.citext :text
           t.interval :time_interval
           t.geometry :feature_geometry, srid: 4326, type: "multi_polygon"
+          t.jsonb :jsonb_column
         end
       end
     }.to_not raise_error
@@ -488,6 +489,7 @@ describe 'adapter-specific extensions' do
     should_have_column(ExtendedModel, :text, :text)
     should_have_column(ExtendedModel, :time_interval, :text)
     should_have_column(ExtendedModel, :feature_geometry, :text)
+    should_have_column(ExtendedModel, :jsonb_column, :json)
   end
 
   if ActiveRecord::VERSION::MAJOR > 4
