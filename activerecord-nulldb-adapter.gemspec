@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files    = `git ls-files`.split($/)
-  s.homepage = "http://github.com/nulldb/nulldb"
+  s.homepage = "https://github.com/nulldb/nulldb"
   s.licenses = ["MIT"]
 
   s.add_runtime_dependency 'activerecord', '>= 2.0.0'
