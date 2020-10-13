@@ -84,6 +84,8 @@ describe "NullDB" do
 
       add_index "employees", :name, :name => "index_employees_on_name"
       add_index "employees", ["employee_number"], :name => "index_employees_on_employee_number", :unique => true
+      add_index "employees", :hire_date
+      remove_index "employees", :hire_date
       add_index "employees_widgets", ["employee_id", "widget_id"], :name => "my_index"
 
       add_fk_constraint "foo", "bar", "baz", "buz", "bungle"
@@ -265,7 +267,7 @@ describe "NullDB" do
   end
 
 
-  it "should support adding indexes" do
+  it "should support adding and removing indexes" do
     expect( Employee.connection.indexes('employees').size ).to eq 2
     expect( Employee.connection.indexes('employees_widgets').size ).to eq 1
   end
@@ -288,7 +290,7 @@ describe "NullDB" do
     expect { NullDB.nullify }.to_not raise_error
   end
 
-  it 'should handle count queries' do 
+  it 'should handle count queries' do
     expect(Employee.count).to eql(0)
   end
 end
@@ -324,11 +326,141 @@ describe NullDB::RSpec::NullifiedDatabase do
   end
 end
 
+describe 'table changes' do
+  before(:each) do
+    ActiveRecord::Base.establish_connection :adapter => :nulldb
+    ActiveRecord::Migration.verbose = false
+
+    ActiveRecord::Schema.define do
+      create_table(:employees) do |t|
+        t.string  :name, null: false, limit: 50
+        t.date    :hire_date
+        t.integer :employee_number
+        t.decimal :salary
+      end
+    end
+  end
+
+  def should_have_column(klass, col_name, col_type)
+    col = klass.columns_hash[col_name.to_s]
+    expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
+  end
+
+  describe 'rename_table' do
+    it 'should rename a table' do
+      expect{
+        ActiveRecord::Schema.define do
+          rename_table :employees, :workers
+        end
+      }.to_not raise_error
+
+      class Worker < ActiveRecord::Base
+        after_save :on_save_finished
+
+        def on_save_finished
+        end
+      end
+
+      should_have_column(Worker, :name, :string)
+      should_have_column(Worker, :hire_date, :date)
+      should_have_column(Worker, :employee_number, :integer)
+      should_have_column(Worker, :salary, :decimal)
+
+      worker = Worker.create(:name => "Bob Jones")
+      expect(worker.name).to eq "Bob Jones"
+    end
+  end
+
+  describe 'add_column' do
+    it 'should add a column to an existing table' do
+      expect{
+        ActiveRecord::Schema.define do
+          add_column :employees, :title, :string
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+
+      should_have_column(Employee, :name, :string)
+      should_have_column(Employee, :hire_date, :date)
+      should_have_column(Employee, :employee_number, :integer)
+      should_have_column(Employee, :salary, :decimal)
+      should_have_column(Employee, :title, :string)
+    end
+  end
+
+  describe 'change_column' do
+    it 'should change the column type' do
+      expect{
+        ActiveRecord::Schema.define do
+          change_column :employees, :name, :text
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+
+      should_have_column(Employee, :name, :text)
+      should_have_column(Employee, :hire_date, :date)
+      should_have_column(Employee, :employee_number, :integer)
+      should_have_column(Employee, :salary, :decimal)
+    end
+  end
+
+  describe 'rename_column' do
+    it 'should rename a column' do
+      expect{
+        ActiveRecord::Schema.define do
+          rename_column :employees, :name, :full_name
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+
+      should_have_column(Employee, :full_name, :string)
+      should_have_column(Employee, :hire_date, :date)
+      should_have_column(Employee, :employee_number, :integer)
+      should_have_column(Employee, :salary, :decimal)
+    end
+  end
+
+  describe 'change_column_default' do
+    it 'should change default value of a column' do
+      expect{
+        ActiveRecord::Schema.define do
+          change_column_default :employees, :name, 'Jon Doe'
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+
+      columns = Employee.columns
+      expect(columns.second.default).to eq('Jon Doe')
+    end
+
+    it 'should change default value of a with has syntax' do
+      expect{
+        ActiveRecord::Schema.define do
+          change_column_default :employees, :name, from: nil, to: 'Jon Doe'
+        end
+        Employee.connection.schema_cache.clear!
+        Employee.reset_column_information
+      }.to_not raise_error
+
+      columns = Employee.columns
+      expect(columns.second.default).to eq('Jon Doe')
+    end
+  end
+end
 
 describe 'adapter-specific extensions' do
   before(:all) do
     ActiveRecord::Base.establish_connection :adapter => :nulldb
     ActiveRecord::Migration.verbose = false
+  end
+
+  def should_have_column(klass, col_name, col_type)
+    col = klass.columns_hash[col_name.to_s]
+    expect(col.sql_type.to_s.gsub(/\([0-9]+\)/, "").to_sym).to eq col_type
   end
 
   it "supports 'enable_extension' in the schema definition" do
@@ -337,6 +469,27 @@ describe 'adapter-specific extensions' do
         enable_extension "plpgsql"
       end
     }.to_not raise_error
+  end
+
+  it 'supports postgres extension columns' do
+    expect {
+      ActiveRecord::Schema.define do
+        create_table :extended_models do |t|
+          t.citext :text
+          t.interval :time_interval
+          t.geometry :feature_geometry, srid: 4326, type: "multi_polygon"
+          t.jsonb :jsonb_column
+        end
+      end
+    }.to_not raise_error
+
+    class ExtendedModel < ActiveRecord::Base
+    end
+
+    should_have_column(ExtendedModel, :text, :text)
+    should_have_column(ExtendedModel, :time_interval, :text)
+    should_have_column(ExtendedModel, :feature_geometry, :text)
+    should_have_column(ExtendedModel, :jsonb_column, :json)
   end
 
   if ActiveRecord::VERSION::MAJOR > 4

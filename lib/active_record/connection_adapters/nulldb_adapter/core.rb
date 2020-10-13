@@ -74,13 +74,25 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
     yield table_definition if block_given?
 
-    @tables[table_name] = table_definition
+    @tables[table_name.to_s] = table_definition
+  end
+
+  def rename_table(table_name, new_name)
+    table_definition = @tables.delete(table_name.to_s)
+
+    table_definition.name = new_name.to_s
+    @tables[new_name.to_s] = table_definition
   end
 
   def add_index(table_name, column_names, options = {})
     column_names = Array.wrap(column_names).map(&:to_s)
     index_name, index_type, ignore = add_index_options(table_name, column_names, options)
     @indexes[table_name] << IndexDefinition.new(table_name, index_name, (index_type == 'UNIQUE'), column_names, [], [])
+  end
+
+  def remove_index(table_name, options = {})
+    index_name = index_name_for_remove(table_name, options)
+    index = @indexes[table_name].reject! { |index| index.name == index_name }
   end
 
   unless instance_methods.include? :add_index_options
@@ -226,6 +238,45 @@ class ActiveRecord::ConnectionAdapters::NullDBAdapter < ActiveRecord::Connection
 
   def primary_key(table_name)
     columns(table_name).detect { |col| col.sql_type == :primary_key }.try(:name)
+  end
+
+  def add_column(table_name, column_name, type, options = {})
+    super
+
+    table_meta = @tables[table_name.to_s]
+    return unless table_meta
+
+    table_meta.column column_name, type, options
+  end
+
+  def change_column(table_name, column_name, type, options = {})
+    table_meta = @tables[table_name.to_s]
+    column = table_meta.columns.find { |column| column.name == column_name.to_s }
+    return unless column
+
+    column.type = type
+    column.options = options if options
+  end
+
+  def rename_column(table_name, column_name, new_column_name)
+    table_meta = @tables[table_name.to_s]
+    column = table_meta.columns.find { |column| column.name == column_name.to_s }
+    return unless column
+
+    column.name = new_column_name
+  end
+
+  def change_column_default(table_name, column_name, default_or_changes)
+    table_meta = @tables[table_name.to_s]
+    column = table_meta.columns.find { |column| column.name == column_name.to_s }
+
+    return unless column
+
+    if default_or_changes.kind_of? Hash
+      column.default = default_or_changes[:to]
+    else
+      column.default = default_or_changes
+    end
   end
 
   protected
