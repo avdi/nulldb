@@ -2,19 +2,16 @@
 
 source "https://rubygems.org"
 
-git 'https://github.com/rails/rails.git' do
-  gem 'activerecord'
-end
-
-gem 'arel', github: 'rails/arel', branch: 'master'
+gem "activerecord", github: "rails/rails"
 
 group :development, :test do
   gem "spec"
   gem "rspec", ">= 1.2.9"
   gem "rake"
+  gem "rdoc"
 end
 
 group :development do
   gem "appraisal"
-  gem "simplecov", :require => false
+  gem "simplecov", require: false
 end
