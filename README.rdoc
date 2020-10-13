@@ -16,14 +16,14 @@ a real database.
 == Compatibility
 
 === Ruby
-Currently supported Ruby versions: MRI 2.2.x, 2.3.x, 2.4.x, 2.5.x, 2.6.x
+Currently supported Ruby versions: MRI 2.5.x, 2.6.x, 2.7.x
 
-Experimental support provided for: JRuby, Rubinius
+Experimental support provided for: JRuby
 
 === ActiveRecord
-Any version of ActiveRecord since 2.0, including ActiveRecord 5.0
+Any version of ActiveRecord >= 5
 
-It is tested against AR 2.3, 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 5.0.
+It is tested against AR 5.2, 6.0 and master branch.
 
 == Installation
 
@@ -136,7 +136,8 @@ nothing will be saved.
 == Who
 
 NullDB was originally written by Avdi Grimm <mailto:avdi@avdi.org>.
-It is currently maintained by {Bram de Vries}[https://github.com/blaet].
+It is currently maintained by {Danilo Cabello}[https://github.com/cabello].
+Previously maintained by: {Bram de Vries}[https://github.com/blaet].
 
 == Where
 
